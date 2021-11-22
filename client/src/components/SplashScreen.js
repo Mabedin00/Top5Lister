@@ -1,4 +1,5 @@
 import React, { useContext, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Fab, Typography } from '@mui/material'
 import Button from '@mui/material/Button';
 import logo from '../logo.svg';
@@ -7,7 +8,7 @@ import logo from '../logo.svg';
 export default function SplashScreen() {
 
     return (
-        <div id="splash-screen">
+        <div class="foundation-screen">
             <img src={logo} className="app-logo" alt="logo" />
             <div className="splash-text">
                 <Typography variant="h3" gutterBottom>
@@ -20,12 +21,12 @@ export default function SplashScreen() {
             {/* add button for login, create account and continue as guest */}
             <div className="splash-button-container">
                 <div>
-                    <Button variant="contained" color="primary" >
+                    <Button variant="contained" color="primary" href = "/login/">
                         Login
                     </Button> 
                 </div>
                 <div>   
-                    <Button variant="contained" color="primary" >
+                    <Button variant="contained" color="primary" href = "/register/">
                         Create Account
                     </Button> 
                 </div>
