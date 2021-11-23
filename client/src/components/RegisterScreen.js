@@ -1,4 +1,7 @@
 import React, { useContext, useEffect } from 'react'
+import AuthContext from '../auth'
+import { useHistory } from 'react-router-dom'
+import { GlobalStoreContext } from '../store'
 import { Link } from 'react-router-dom'
 import { Fab, Typography } from '@mui/material'
 import Button from '@mui/material/Button';
@@ -6,12 +9,32 @@ import logo from '../logo.svg';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 
 export default function RegisterScreen() {
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
+    const history = useHistory();
+
 
     const handleSubmit = (event) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        auth.registerUser({
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            email: formData.get('email'),
+            username: formData.get('username'),
+            password: formData.get('password'),
+            passwordVerify: formData.get('passwordVerify')
+        }, store);
+        if (!auth.error){
+            history.push('/login');
         
+        }
+        else{
+            console.log(auth.error);
+            auth.error = null;
+        }
     };
 
     return (
@@ -35,19 +58,19 @@ export default function RegisterScreen() {
                 <TextField
                     margin="normal"
                     required
-                    id="first-name"
+                    id="firstName"
                     label="First Name"
                     variant="filled"
-                    name="first-name"
+                    name="firstName"
                     color="secondary"
                 /> 
                 <TextField
                     margin="normal"
                     required
-                    id="last-name"
+                    id="lastName"
                     label="Last Name"
                     variant="filled"
-                    name="last-name"
+                    name="lastName"
                     color="secondary"
                 /> <br/>
                 <TextField
@@ -96,7 +119,6 @@ export default function RegisterScreen() {
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                     style={{width: '30%'}}
-
                 >
                     Sign Up
                 </Button> <br/>

@@ -7,14 +7,27 @@ import logo from '../logo.svg';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import AuthContext from '../auth'
+import { GlobalStoreContext } from '../store'
+
 
 
 
 
 export default function LoginScreen() {
 
+    const { auth } = useContext(AuthContext);
+    const { store } = useContext(GlobalStoreContext);
+    
+
     const handleSubmit = (event) => {
-        
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        auth.loginUser({
+            username: formData.get('username'),
+            password: formData.get('password'),
+        }, store);
+        console.log(auth.loggedIn);
     };
 
     return (

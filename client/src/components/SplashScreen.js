@@ -8,7 +8,7 @@ import logo from '../logo.svg';
 export default function SplashScreen() {
 
     return (
-        <div class="foundation-screen">
+        <div className="foundation-screen">
             <img src={logo} className="app-logo" alt="logo" />
             <div className="splash-text">
                 <Typography variant="h3" gutterBottom>
