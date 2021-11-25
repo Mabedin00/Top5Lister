@@ -39,7 +39,7 @@ function GlobalStoreContextProvider(props) {
         listNameActive: false,
         itemActive: false,
         listMarkedForDeletion: null,
-        viewMode: null,
+        viewMode: "my",
     });
     const history = useHistory();
 

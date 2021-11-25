@@ -29,6 +29,10 @@ export default function Navbar() {
 
     }
 
+    const selectedStyle = {
+        borderRadius: '50%',
+    }
+
     // Handle click for change view
     const handleClick = (viewMode) => {
         store.changeViewMode(viewMode);
@@ -38,16 +42,34 @@ export default function Navbar() {
         <div className="navbar">
             <Box display="flex"  alignItems="center">
                 <IconButton disabled={!auth.loggedIn} onClick={() => handleClick('my')}>
-                    <HomeIcon sx={selectionStyle}  />
+        
+                    <HomeIcon sx={{
+                        fontSize: "68px",
+                        marginRight: '10px',
+                        border: store.viewMode === 'my' ? '4px solid #00ff00' : 'none'
+                    }}
+                    />
                 </IconButton>
                 <IconButton onClick={() => handleClick('all')}>
-                    <GroupsIcon sx={selectionStyle} />
+                    <GroupsIcon sx={{
+                        fontSize: "68px",
+                        marginRight: '10px',
+                        border: store.viewMode === 'all' ? '4px solid #00ff00' : 'none'
+                    }} />
                 </IconButton>
                 <IconButton onClick={() => handleClick('user')}>
-                    <PersonIcon sx={selectionStyle} />
+                    <PersonIcon sx={{
+                        fontSize: "68px",
+                        marginRight: '10px',
+                        border: store.viewMode === 'user' ? '4px solid #00ff00' : 'none'
+                    }} />
                 </IconButton>
                 <IconButton onClick={() => handleClick('community')}>
-                    <FunctionsIcon sx={selectionStyle} />
+                    <FunctionsIcon sx={{
+                        fontSize: "68px",
+                        marginRight: '10px',
+                        border: store.viewMode === 'community' ? '4px solid #00ff00' : 'none'
+                    }} />
                 </IconButton>
                 <TextField
                     margin="normal"
