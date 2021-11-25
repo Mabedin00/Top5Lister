@@ -3,22 +3,17 @@ import { Link } from 'react-router-dom'
 import { Fab, Typography } from '@mui/material'
 import Button from '@mui/material/Button';
 import logo from '../logo.svg';
+import Navbar from './Navbar'
 import AuthContext from '../auth'
+import AppBanner from './AppBanner';
 
-
-export default function HomeScreen() {
+export default function MyListsScreen() {
     const { auth } = useContext(AuthContext);
 
-    if (auth.loggedIn) {
-        return (
-            <div className="foundation-screen">
-                HomeScreen but AUTHED
-            </div>
-        )
-    }
+    
     return (
-        <div className="foundation-screen">
-            HomeScreen
+        <div >
+            My Lists
         </div>
     )
 }

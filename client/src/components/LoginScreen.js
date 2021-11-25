@@ -23,6 +23,7 @@ export default function LoginScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
+        // store.changeViewMode('home');
         auth.loginUser({
             username: formData.get('username'),
             password: formData.get('password'),
