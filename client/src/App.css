@@ -75,3 +75,20 @@ body {
 .navbar {
     fontSize: 10%;
 }
+
+#statusbar {
+    height: 8vh;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: center;
+    background-color: var(--swatch-comments);
+    border-radius: 10px;
+    margin: 10px 10px 10px 10px;
+    /* box-sizing: border-box; */
+    position: absolute;
+    right: 0;   
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+}

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Fab, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import logo from '../logo.svg';

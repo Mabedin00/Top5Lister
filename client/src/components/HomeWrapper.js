@@ -1,8 +1,4 @@
 import React, { useContext, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { Fab, Typography } from '@mui/material'
-import Button from '@mui/material/Button';
-import logo from '../logo.svg';
 import Navbar from './Navbar'
 import AuthContext from '../auth'
 import AppBanner from './AppBanner';
@@ -11,6 +7,7 @@ import MyListsScreen from './MyListsScreen';
 import AllListsScreen from './AllListsScreen';
 import UserListsScreen from './UserListsScreen';
 import CommunityListsScreen from './CommunityListsScreen';
+import Statusbar from './Statusbar';
 
 export default function HomeWrapper() {
     const { auth } = useContext(AuthContext);
@@ -41,6 +38,7 @@ export default function HomeWrapper() {
             <AppBanner />
             <Navbar />
             {view}
+            <Statusbar/>
         </div>
     )
     
