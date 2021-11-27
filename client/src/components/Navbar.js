@@ -1,11 +1,10 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/HomeOutlined';
 import PersonIcon from '@mui/icons-material/PersonOutlined';
 import GroupsIcon from '@mui/icons-material/GroupsOutlined';
 import FunctionsIcon from '@mui/icons-material/FunctionsOutlined';
 import SortIcon from '@mui/icons-material/Sort';
-import SearchIcon from '@mui/icons-material/SearchOutlined';
 import Box from '@mui/material/Box';
 import AuthContext from '../auth';
 import TextField from '@mui/material/TextField';
@@ -18,20 +17,12 @@ export default function Navbar() {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
 
-
-    const selectionStyle = {
-        fontSize: "68px",
-        marginRight: '10px',
-    }
     const sortStyle = {
         fontSize: "68px",
         // marginLeft: '10%',
 
     }
 
-    const selectedStyle = {
-        borderRadius: '50%',
-    }
 
     // Handle click for change view
     const handleClick = (viewMode) => {

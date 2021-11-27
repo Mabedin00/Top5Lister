@@ -15,7 +15,7 @@ createTop5List = (req, res) => {
     if (!top5List) {
         return res.status(400).json({ success: false, error: err })
     }
-    User.findOne({ email: req.body.ownerEmail }, (err, user) => {
+    User.findOne({ username: req.body.ownerUsername }, (err, user) => {
         user.lists.push(top5List._id);
         user.save()
     })

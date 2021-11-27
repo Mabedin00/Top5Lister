@@ -109,20 +109,22 @@ function AuthContextProvider(props) {
 
     // Logs user in and sets the state
     auth.loginUser = async function(userData, store) {
-            await api.loginUser(userData).then(response => {
-                if (response.status === 200) {
-                    authReducer({
-                        type: AuthActionType.SET_LOGGED_IN,
-                        payload: {
-                            loggedIn: true,
-                            user: response.data.user
-                        }
-                    })
+        await api.loginUser(userData).then(response => {
+            if (response.status === 200) {
+                console.log(response.data.user);
+                authReducer({
+                    type: AuthActionType.SET_LOGGED_IN,
+                    payload: {
+                        loggedIn: true,
+                        user: response.data.user
+                    }
+                })
                     history.push("/home");
                     // store.loadIdNamePairs();
                 }
             }).catch(err => {
                 let errorMsg = err.response.data.errorMessage;
+                console.log(errorMsg);
                 authReducer({
                     type: AuthActionType.SET_ERROR,
                     payload: {

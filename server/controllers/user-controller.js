@@ -10,7 +10,8 @@ getLoggedIn = async (req, res) => {
             user: {
                 firstName: loggedInUser.firstName,
                 lastName: loggedInUser.lastName,
-                email: loggedInUser.email
+                email: loggedInUser.email,
+                username: loggedInUser.username
             }
         }).send();
     })
@@ -104,6 +105,7 @@ loginUser = async (req, res) => {
             user: {
                 firstName: user.firstName,
                 lastName: user.lastName,
+                username: user.username ,
                 email: user.email,
                 lists: user.lists
             }

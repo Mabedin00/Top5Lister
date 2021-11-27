@@ -216,7 +216,6 @@ function GlobalStoreContextProvider(props) {
 
     // THIS FUNCTION PROCESSES CLOSING THE CURRENTLY LOADED LIST
     store.closeCurrentList = function () {
-        console.log("ee");
         storeReducer({
             type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
             payload: {}
@@ -228,10 +227,11 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION CREATES A NEW LIST
     store.createNewList = async function () {
         let newListName = "Untitled" + store.newListCounter;
+
         let payload = {
             name: newListName,
             items: ["?", "?", "?", "?", "?"],
-            ownerEmail: auth.user.email
+            ownerUsername: auth.user.username
         };
         const response = await api.createTop5List(payload);
         if (response.data.success) {
@@ -331,6 +331,12 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.CHANGE_VIEW,
             payload: viewMode
         });
+    }
+
+    
+    store.updateItem = function (index, newItem) {
+        store.currentList.items[index] = newItem;
+        store.updateCurrentList();
     }
 
     store.updateCurrentList = async function () {
