@@ -3,7 +3,6 @@ import { GlobalStoreContext } from '../store'
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
-import EditIcon from '@mui/icons-material/Edit';
 
 function Top5Item(props) {
     const { store } = useContext(GlobalStoreContext);
@@ -32,9 +31,13 @@ function Top5Item(props) {
             
         }
     }
+
+
+
     function handleUpdateText(event) {
         setText(event.target.value);
     }
+
 
 
 
@@ -45,6 +48,7 @@ function Top5Item(props) {
             id={'item-' + (index+1)}
             itemKey={props.itemKey}
             className="top5-item"
+            onDoubleClick={handleToggleEdit}
             sx={{ display: 'flex', p: 1, width: .90}}
             style={{
                 fontSize: '18pt',
@@ -62,7 +66,9 @@ function Top5Item(props) {
                 name="name"
                 autoComplete="List Item"
                 className='list-item'
+                color="secondary"
                 onKeyPress={handleKeyPress}
+                onBlur={toggleEdit}
                 onChange={handleUpdateText}
                 defaultValue={props.text}
                 inputProps={{style: {fontSize: 24}}}

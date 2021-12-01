@@ -3,18 +3,26 @@ const User = require('../models/user-model')
 const bcrypt = require('bcryptjs')
 
 getLoggedIn = async (req, res) => {
-    auth.verify(req, res, async function () {
-        const loggedInUser = await User.findOne({ _id: req.userId });
+    try{
+        auth.verify(req, res, async function () {
+            const loggedInUser = await User.findOne({ _id: req.userId });
+            return res.status(200).json({
+                loggedIn: true,
+                user: {
+                    firstName: loggedInUser.firstName,
+                    lastName: loggedInUser.lastName,
+                    email: loggedInUser.email,
+                    username: loggedInUser.username
+                }
+            }).send();
+        })
+    }
+    catch{
         return res.status(200).json({
-            loggedIn: true,
-            user: {
-                firstName: loggedInUser.firstName,
-                lastName: loggedInUser.lastName,
-                email: loggedInUser.email,
-                username: loggedInUser.username
-            }
+            loggedIn: false
         }).send();
-    })
+    }
+    
 }
 
 registerUser = async (req, res) => {

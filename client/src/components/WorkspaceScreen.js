@@ -7,11 +7,20 @@ import Statusbar from './Statusbar';
 import AppBanner from './AppBanner';
 import Navbar from './Navbar';
 import TextField from '@mui/material/TextField';
+import { useHistory } from 'react-router-dom'
 import Button from '@mui/material/Button';
 
 
 function WorkspaceScreen() {
     const { store } = useContext(GlobalStoreContext);
+    const history = useHistory();
+
+    // SAVES THE CURRENT LIST WITHOUT PUBLISHING IT
+    function handleSave(event) {
+        event.preventDefault();
+        history.push('/home');
+
+    }
 
     let editItems = "";
     if (store.currentList) {
@@ -54,7 +63,7 @@ function WorkspaceScreen() {
                     {editItems}
                 </div>
                 <div id="workspace-buttons">
-                    <Button variant="contained">Save</Button>
+                    <Button variant="contained" onClick= {handleSave}>Save</Button>
                     <Button variant="contained">Publish</Button>
                 </div>
             </div>

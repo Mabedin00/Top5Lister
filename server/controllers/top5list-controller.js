@@ -140,13 +140,15 @@ getTop5ListPairs = async (req, res) => {
     }).catch(err => console.log(err))
 }
 
-// GET ALL LIST PAIRS FROM A USER EMAIL
-getTop5ListPairsByUserEmail = async (req, res) => {
-    await Top5List.find({ ownerEmail: req.params.email }, (err, top5Lists) => {
+// GET ALL LIST PAIRS FROM A USERNAME
+getTop5ListPairsByUsername = async (req, res) => {
+    console.log(req.params)
+    await Top5List.find({ ownerUsername: req.params.username }, (err, top5Lists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
         if (!top5Lists.length) {
+            console.log("!top5Lists.length");
             return res
                 .status(404)
                 .json({ success: false, error: `Top 5 Lists not found` })
@@ -155,10 +157,15 @@ getTop5ListPairsByUserEmail = async (req, res) => {
         let pairs = [];
         for (let key in top5Lists) {
             let list = top5Lists[key];
+            console.log("list: " + JSON.stringify(list));
             let pair = {
                 _id: list._id,
-                name: list.name
-            };
+                name: list.name,
+                ownerUsername: list.ownerUsername,
+                likes: list.likedBy.length,
+                dislikes: list.dislikedBy.length,
+                isPublished: list.isPublished
+            };  
             pairs.push(pair);
         }
         return res.status(200).json({ success: true, idNamePairs: pairs })
@@ -174,6 +181,6 @@ module.exports = {
     deleteTop5List,
     getTop5Lists,
     getTop5ListPairs,
-    getTop5ListPairsByUserEmail,
+    getTop5ListPairsByUsername,   
     getTop5ListById
 }

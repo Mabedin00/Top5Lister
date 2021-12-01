@@ -191,7 +191,7 @@ function GlobalStoreContextProvider(props) {
                     response = await api.updateTop5ListById(top5List._id, top5List);
                     if (response.data.success) {
                         async function getListPairs(top5List) {
-                            response = await api.getTop5ListPairsByUserEmail(auth.user.email);
+                            response = await api.getTop5ListPairsByUsername(auth.user.username);
                             if (response.data.success) {
                                 let pairsArray = response.data.idNamePairs;
                                 storeReducer({
@@ -253,7 +253,7 @@ function GlobalStoreContextProvider(props) {
     // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
     store.loadIdNamePairs = async function () {
         try{
-            const response = await api.getTop5ListPairsByUserEmail(auth.user.email);
+            const response = await api.getTop5ListPairsByUsername(auth.user.username);
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
                 console.log(pairsArray);
@@ -267,6 +267,8 @@ function GlobalStoreContextProvider(props) {
             }
         }
         catch(err){
+            // let errorMsg = err.response.data.errorMessage;
+            console.log(auth.user);
             let pairsArray = [];
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
@@ -295,7 +297,7 @@ function GlobalStoreContextProvider(props) {
         let response = await api.deleteTop5ListById(listToDelete._id);
         if (response.data.success) {
             store.loadIdNamePairs();
-            history.push("/");
+            // history.push("/");
         }
     }
 

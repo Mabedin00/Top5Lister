@@ -10,6 +10,7 @@ const Top5ListSchema = new Schema(
         dislikedBy: { type: [String] },
         views: { type: Number },
         publishedDate: { type: Date },
+        isPublished: { type: Boolean, default: false },
 
     },
     { timestamps: true },
