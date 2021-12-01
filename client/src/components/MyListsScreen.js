@@ -59,7 +59,6 @@ export default function MyListsScreen() {
             }
             </List>;
     }
-    console.log(store.idNamePairs);
     return (
         <div id="all-lists">
             <Modal

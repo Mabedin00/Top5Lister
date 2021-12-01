@@ -64,6 +64,13 @@ body {
 }
 
 
+.view-items{
+    background-color: var(--swatch-dark-blue);
+    color: var(--swatch-comments) ;
+    border-radius: 10px;
+    padding-left:10px;
+    width: 80%;
+}
 
 .splash-text{
     color: var(--swatch-comments);

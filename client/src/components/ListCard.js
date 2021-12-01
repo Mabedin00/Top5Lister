@@ -3,18 +3,20 @@ import { GlobalStoreContext } from '../store'
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
-import Modal from '@mui/material/Modal';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import ListViewSection from './ListViewSection'
 
 
 function ListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [editActive, setEditActive] = useState(false);
     const [text, setText] = useState("");
+    const [isOpen, setOpen] = useState(false);
     const { idNamePair } = props;
 
 
@@ -38,6 +40,16 @@ function ListCard(props) {
         store.markListForDeletion(id);
     }
 
+    function handleOpenList(event, id) {
+        event.stopPropagation();
+        setOpen(true);
+    }
+    function handleCloseList(event, id) {
+        event.stopPropagation();
+        setOpen(false);
+
+    }
+
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             let id = event.target.id.substring("list-".length);
@@ -55,7 +67,6 @@ function ListCard(props) {
     function handleUpdateText(event) {
         setText(event.target.value);
     }
-    console.log(idNamePair);
     let cardElement =
         <ListItem
             id={idNamePair._id}
@@ -74,6 +85,13 @@ function ListCard(props) {
                     <div className="list-details">
                         <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}>{idNamePair.name}</Box> 
                         <Box sx={{ p: 1, flexGrow: 1 }}> {"By: " + idNamePair.ownerUsername} </Box>
+                        {
+                            isOpen ? 
+                            <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}> 
+                                <ListViewSection list={idNamePair} />
+                            </Box> :
+                            <div />
+                        }
                         {
                             idNamePair.isPublished ?
                             <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " } </Box> :
@@ -95,7 +113,7 @@ function ListCard(props) {
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        alignItems: 'flex-end',
+                            alignItems: 'flex-end',
                     }}
                 >
                     <Box>
@@ -106,33 +124,28 @@ function ListCard(props) {
                         </IconButton>
                     </Box>
                     <Box>
-                        <IconButton aria-label='drop-down'>
-                            <ArrowDropDownIcon style={{fontSize:'36pt'}} />
-                        </IconButton>
+                       {    
+                            isOpen ? 
+                            <IconButton aria-label='drop-up' 
+                                onClick={(event) => {
+                                handleCloseList(event, idNamePair._id)
+                                }}
+                            >
+                                <ArrowDropUpIcon style={{fontSize:'36pt'}} />
+                            </IconButton> :
+                            <IconButton aria-label='drop-down'
+                                onClick={(event) => {
+                                handleOpenList(event, idNamePair._id)
+                                }}
+                            >
+                                <ArrowDropDownIcon style={{fontSize:'36pt'}} />
+                            </IconButton>
+                        }
                     </Box>
                 </Grid>
             </Grid>
-        </ListItem>
 
-    if (editActive) {
-        cardElement =
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                id={"list-" + idNamePair._id}
-                label="Top 5 List Name"
-                name="name"
-                autoComplete="Top 5 List Name"
-                className='list-card'
-                onKeyPress={handleKeyPress}
-                onChange={handleUpdateText}
-                defaultValue={idNamePair.name}
-                inputProps={{style: {fontSize: 48}}}
-                InputLabelProps={{style: {fontSize: 24}}}
-                autoFocus
-            />
-    }
+        </ListItem>
     return (
         cardElement
     );

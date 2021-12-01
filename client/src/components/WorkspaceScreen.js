@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import Top5Item from './Top5Item.js'
 import List from '@mui/material/List';
 import { Typography } from '@mui/material'
@@ -14,13 +14,37 @@ import Button from '@mui/material/Button';
 function WorkspaceScreen() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
+    const [text, setText] = useState("");
+
 
     // SAVES THE CURRENT LIST WITHOUT PUBLISHING IT
+    console.log(store.currentList);
     function handleSave(event) {
         event.preventDefault();
+        if (text.length > 0) {
+            store.changeListName(store.currentList._id, text);
+        }
         history.push('/home');
 
     }
+
+    function handleKeyPress(event) {
+        if (event.code === "Enter") {
+            console.log("Enter pressed");
+            if (text.length > 0) {
+                store.changeListName(store.currentList._id, text);
+            }
+            else{
+                store.changeListName(store.currentList._id, store.currentList.name);
+            }
+        }
+    }
+
+    function handleUpdateText(event) {
+        setText(event.target.value);
+    }
+
+
 
     let editItems = "";
     if (store.currentList) {
@@ -50,10 +74,13 @@ function WorkspaceScreen() {
                 <TextField
                     margin="normal"
                     name="query"
+                    // onBlur={handleBlur}
+                    onKeyPress={handleKeyPress}
+                    onChange={handleUpdateText}
                     label="List Name"
                     variant="outlined"  
                     size="small"
-                    id="query"
+                    id="list-name"
                     sx = {{ width: '500px',
                             marginTop: '10px',
                             marginLeft: '10px',
@@ -67,7 +94,6 @@ function WorkspaceScreen() {
                     <Button variant="contained">Publish</Button>
                 </div>
             </div>
-            {/* <Statusbar/> */}
         </div>
     )
 }

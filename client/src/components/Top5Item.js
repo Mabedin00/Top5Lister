@@ -20,7 +20,6 @@ function Top5Item(props) {
         }
         setEditActive(newActive);
     }
-    console.log(props);
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             if (text.length > 0) {
