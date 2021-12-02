@@ -3,7 +3,6 @@ import Top5Item from './Top5Item.js'
 import List from '@mui/material/List';
 import { Typography } from '@mui/material'
 import { GlobalStoreContext } from '../store/index.js'
-import Statusbar from './Statusbar';
 import AppBanner from './AppBanner';
 import Navbar from './Navbar';
 import TextField from '@mui/material/TextField';
@@ -18,7 +17,6 @@ function WorkspaceScreen() {
 
 
     // SAVES THE CURRENT LIST WITHOUT PUBLISHING IT
-    console.log(store.currentList);
     function handleSave(event) {
         event.preventDefault();
         if (text.length > 0) {
@@ -31,20 +29,43 @@ function WorkspaceScreen() {
     function handleKeyPress(event) {
         if (event.code === "Enter") {
             console.log("Enter pressed");
-            if (text.length > 0) {
-                store.changeListName(store.currentList._id, text);
-            }
-            else{
-                store.changeListName(store.currentList._id, store.currentList.name);
-            }
+            handleBlur()
         }
     }
 
     function handleUpdateText(event) {
         setText(event.target.value);
     }
+    function handleBlur() {
+        if (text.length > 0) {
+            store.changeListName(store.currentList._id, text);
+        }
+        else{
+            store.changeListName(store.currentList._id, store.currentList.name);
+        }
+    }
 
 
+
+    // let today = new Date();
+    // console.log(today.toDateString().slice(4, 10) + ", " + today.getFullYear());
+
+    function handlePublish() {
+        store.checkPublish();
+        if (store.publishError){
+            // console.log("Error: " + store.publishError);
+            return;
+        }
+        store.publishList();
+        console.log("Published");
+        // history.push('/home');
+        return;
+    }
+
+    if (store.currentList === null) {
+        history.push('/home');
+        return (<div></div>);
+    }
 
     let editItems = "";
     if (store.currentList) {
@@ -52,12 +73,12 @@ function WorkspaceScreen() {
             <List>
                 {
                     store.currentList.items.map((item, index) => (
-                        <div id="workspace-item">
+                        <div id="workspace-item" key={'top5-item-' + (index+1)}>
                             <div className="item-number"><Typography variant="h4">{index+1}.</Typography></div>
                             <Top5Item 
                                 text={item}
                                 itemkey={'top5-item-' + (index+1)}
-                                key={'top5-item-' + (index+1)}
+                                
                                 index={index} 
                             />
                         </div>
@@ -73,12 +94,13 @@ function WorkspaceScreen() {
             <div id="workspace-edit">
                 <TextField
                     margin="normal"
-                    name="query"
-                    // onBlur={handleBlur}
+                    name="list-name"
+                    onBlur={handleBlur}
                     onKeyPress={handleKeyPress}
                     onChange={handleUpdateText}
                     label="List Name"
                     variant="outlined"  
+                    defaultValue={store.currentList.name}
                     size="small"
                     id="list-name"
                     sx = {{ width: '500px',
@@ -91,7 +113,7 @@ function WorkspaceScreen() {
                 </div>
                 <div id="workspace-buttons">
                     <Button variant="contained" onClick= {handleSave}>Save</Button>
-                    <Button variant="contained">Publish</Button>
+                    <Button variant="contained" onClick= {handlePublish}>Publish</Button>
                 </div>
             </div>
         </div>

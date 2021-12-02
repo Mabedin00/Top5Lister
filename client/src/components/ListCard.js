@@ -70,7 +70,7 @@ function ListCard(props) {
     let cardElement =
         <ListItem
             id={idNamePair._id}
-            key={idNamePair._id}
+            itemkey={idNamePair._id}
             style={{
                 height: '100%',
                 width: '100%',

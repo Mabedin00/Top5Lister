@@ -27,8 +27,11 @@ export default function MyListsScreen() {
       };
 
     useEffect(() => {
+        console.log('MyListsScreen: useEffect')
         store.loadIdNamePairs();
-    }, []);
+    }, [auth.user]);
+
+    
 
 
     let listCard = "";

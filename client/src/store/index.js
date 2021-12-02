@@ -27,6 +27,7 @@ export const GlobalStoreActionType = {
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     CHANGE_VIEW: "CHANGE_VIEW",
+    SET_PUBLISH_ERROR: "SET_PUBLISH_ERROR",
 }
 
 
@@ -43,6 +44,7 @@ function GlobalStoreContextProvider(props) {
         listMarkedForDeletion: null,
         openedLists: new Set(),
         viewMode: "my",
+        publishError: null,
     });
     const history = useHistory();
 
@@ -64,6 +66,7 @@ function GlobalStoreContextProvider(props) {
                     isItemEditActive: false,
                     viewMode: store.viewMode,
                     openedLists: new Set(),
+                    publishError: null,
                     listMarkedForDeletion: null
                 });
             }
@@ -75,6 +78,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
+                    publishError: null,
                     openedLists: new Set(),
                     viewMode: store.viewMode,
                     listMarkedForDeletion: null
@@ -88,6 +92,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter + 1,
                     isListNameEditActive: false,
                     isItemEditActive: false,
+                    publishError: null,
                     openedLists: new Set(),
                     viewMode: store.viewMode,
                     listMarkedForDeletion: null
@@ -101,6 +106,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     openedLists: new Set(),
+                    publishError: null,
                     isItemEditActive: false,
                     viewMode: store.viewMode,
                     listMarkedForDeletion: null
@@ -114,6 +120,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     openedLists: store.openedLists,
+                    publishError: null,
                     isItemEditActive: false,
                     viewMode: store.viewMode,
                     listMarkedForDeletion: payload
@@ -127,6 +134,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
+                    publishError: null,
                     viewMode: store.viewMode,
                     openedLists: store.openedLists,
                     listMarkedForDeletion: null
@@ -140,6 +148,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
+                    publishError: null,
                     viewMode: store.viewMode,
                     openedLists: new Set(),
                     listMarkedForDeletion: null
@@ -152,6 +161,7 @@ function GlobalStoreContextProvider(props) {
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
+                    publishError: null,
                     isItemEditActive: true,
                     viewMode: store.viewMode,
                     openedLists: new Set(),
@@ -166,6 +176,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: true,
                     isItemEditActive: false,
+                    publishError: null,
                     viewMode: store.viewMode,
                     openedLists: new Set(),
                     listMarkedForDeletion: null
@@ -179,6 +190,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
+                    publishError: null,
                     openedLists: new Set(),
                     listMarkedForDeletion: null,
                     viewMode: payload
@@ -189,6 +201,7 @@ function GlobalStoreContextProvider(props) {
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
+                    publishError: null,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     openedLists: store.openedLists.add(payload),
@@ -199,6 +212,7 @@ function GlobalStoreContextProvider(props) {
             case GlobalStoreActionType.CLOSE_A_LIST: {
                 return setStore({
                     idNamePairs: store.idNamePairs,
+                    publishError: null,
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
@@ -206,6 +220,19 @@ function GlobalStoreContextProvider(props) {
                     openedLists: store.openedLists.delete(payload),
                     listMarkedForDeletion: null,
                     viewMode: store.viewMode
+                });
+            }
+            case GlobalStoreActionType.SET_PUBLISH_ERROR: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    publishError: payload,
+                    viewMode: store.viewMode,
+                    openedLists: new Set(),
+                    listMarkedForDeletion: null
                 });
             }
             default:
@@ -400,6 +427,55 @@ function GlobalStoreContextProvider(props) {
             type: GlobalStoreActionType.CLOSE_A_LIST,
             payload: id
         });
+    }
+
+    store.checkPublish = async function () {
+
+        for(let i = 0; i < store.currentList.items.length; i++){
+            if(store.currentList.items[i] === "?"){
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PUBLISH_ERROR,
+                    payload: "Please fill all the items"
+                });
+                return;
+            }
+        }
+
+        if(store.currentList.name === ""){
+            storeReducer({
+                type: GlobalStoreActionType.SET_PUBLISH_ERROR,
+                payload: "Your list needs a name"
+            });
+        }
+        
+        const response = await api.getPublishedTop5ListsByUsername(auth.user.username, store.currentList.name);
+        if (response.data.success) {
+            if (response.data.length > 0) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PUBLISH_ERROR,
+                    payload: "You already have a list with this name"
+                });
+            }
+            else {
+                console.log(store.currentList);
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PUBLISH_ERROR,
+                    payload: null
+                });
+            }
+        }
+
+    }
+
+    store.publishList = async function () {
+        const response = await api.publishTop5List(store.currentList._id);
+        if (response.data.success) {
+            store.loadIdNamePairs();
+            return
+        }
+        else {
+            console.log("API FAILED TO PUBLISH A LIST");
+        }
     }
 
     // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME

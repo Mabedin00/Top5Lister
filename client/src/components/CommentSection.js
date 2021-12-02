@@ -4,7 +4,6 @@ import AuthContext from '../auth'
 import AppBanner from './AppBanner';
 import List from '@mui/material/List';
 import { GlobalStoreContext } from '../store'
-import { Divider } from '@mui/material';
 
 export default function CommentSection(props) {
     const { auth } = useContext(AuthContext);

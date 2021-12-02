@@ -45,7 +45,7 @@ function Top5Item(props) {
     let listItem = (
         <ListItem
             id={'item-' + (index+1)}
-            itemKey={props.itemKey}
+            itemkey={props.itemkey}
             className="top5-item"
             onDoubleClick={handleToggleEdit}
             sx={{ display: 'flex', p: 1, width: .90}}
