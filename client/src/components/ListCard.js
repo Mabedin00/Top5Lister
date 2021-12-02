@@ -67,6 +67,9 @@ function ListCard(props) {
     function handleUpdateText(event) {
         setText(event.target.value);
     }
+    const d = new Date(idNamePair.publishedDate);
+    const date = d.toDateString().slice(4, 10) + ", "+ d.toDateString().slice(11, 15)
+
     let cardElement =
         <ListItem
             id={idNamePair._id}
@@ -94,7 +97,7 @@ function ListCard(props) {
                         }
                         {
                             idNamePair.isPublished ?
-                            <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " } </Box> :
+                            <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " + date } </Box> :
                             <Button 
                                 variant="text" 
                                 onClick={(event) => {

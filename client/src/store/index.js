@@ -470,7 +470,7 @@ function GlobalStoreContextProvider(props) {
     store.publishList = async function () {
         const response = await api.publishTop5List(store.currentList._id);
         if (response.data.success) {
-            // store.loadIdNamePairs();
+            store.loadIdNamePairs();
             return
         }
         else {

@@ -136,6 +136,7 @@ getTop5ListPairs = async (req, res) => {
                     likes: list.likedBy.length,
                     dislikes: list.dislikedBy.length,
                     isPublished: list.isPublished,
+                    publishedDate: list.publishedDate,
                     items: list.items,
                     comments: list.comments,
                 };
@@ -158,7 +159,8 @@ publishTop5List = async (req, res) => {
                 .json({ success: false, error: `Top 5 List not found` })
         }
         top5List.isPublished = true;
-        top5List.datePublished = Date.now();
+        top5List.publishedDate = Date.now();
+        // console.log("top5List.isPublished: " + top5List.isPublished);
         top5List
             .save()
             .then(() => {
@@ -219,6 +221,7 @@ getTop5ListPairsByUsername = async (req, res) => {
                 dislikes: list.dislikedBy.length,
                 isPublished: list.isPublished,
                 items: list.items,
+                publishedDate: list.publishedDate,
                 comments: list.comments,
             };  
             pairs.push(pair);
