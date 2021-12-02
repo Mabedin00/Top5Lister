@@ -12,7 +12,7 @@ import Grid from '@mui/material/Grid';
 import ListViewSection from './ListViewSection'
 
 
-function ListCard(props) {
+function PublishedListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const [editActive, setEditActive] = useState(false);
     const [text, setText] = useState("");
@@ -64,9 +64,8 @@ function ListCard(props) {
             
         }
     }
-    function handleUpdateText(event) {
-        setText(event.target.value);
-    }
+    
+
     const d = new Date(idNamePair.publishedDate);
     const date = d.toDateString().slice(4, 10) + ", "+ d.toDateString().slice(11, 15)
 
@@ -92,24 +91,10 @@ function ListCard(props) {
                             isOpen ? 
                             <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}> 
                                 <ListViewSection list={idNamePair} />
-                            </Box> :
+                            </Box> : 
                             <div />
                         }
-                        {
-                            idNamePair.isPublished ?
-                            <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " + date } </Box> :
-                            <Button 
-                                variant="text" 
-                                onClick={(event) => {
-                                        handleLoadList(event, idNamePair._id)
-                                }}
-                                style={{
-                                    justifyContent: 'flex-start',
-                                    color: '#ff0000',
-                                }}
-
-                            > Edit  </Button>
-                        }
+                        <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " + date } </Box> 
                     </div>
                 </Grid>
                 <Grid item xs={4} 
@@ -154,4 +139,4 @@ function ListCard(props) {
     );
 }
 
-export default ListCard;
+export default PublishedListCard;

@@ -1,7 +1,8 @@
 import React, { useContext, useEffect } from 'react'
 import { GlobalStoreContext } from '../store/index.js'
 import AuthContext from '../auth'
-import ListCard from './ListCard.js'
+import UnpublishedListCard from './UnpublishedListCard.js'
+import PublishedListCard from './PublishedListCard.js'
 import List from '@mui/material/List';
 import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
@@ -52,11 +53,17 @@ export default function MyListsScreen() {
                 }}>
             {
                 store.idNamePairs.map((pair) => (
-                    <ListCard
-                        key={pair._id}
-                        idNamePair={pair}
-                        selected={false}
-                    />
+                    (pair.isPublished) ? 
+                        <PublishedListCard
+                            key={pair._id}
+                            idNamePair={pair}
+                            selected={false} /> 
+                        :
+                        <UnpublishedListCard
+                            key={pair._id}
+                            idNamePair={pair}
+                            selected={false}
+                        />
                 ))
             }
             </List>;
