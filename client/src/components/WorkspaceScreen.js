@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import Top5Item from './Top5Item.js'
 import List from '@mui/material/List';
 import { Typography } from '@mui/material'
@@ -7,6 +7,8 @@ import AppBanner from './AppBanner';
 import Navbar from './Navbar';
 import TextField from '@mui/material/TextField';
 import { useHistory } from 'react-router-dom'
+import Modal from '@mui/material/Modal';
+import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
 
@@ -14,6 +16,27 @@ function WorkspaceScreen() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
     const [text, setText] = useState("");
+    const [error, setError] = useState(null);
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        display: 'flex',
+        alignItems: 'center',
+        flexDirection: 'column',
+        boxShadow: 24,
+        p: 4,
+    };
+
+    useEffect(() => {
+        store.checkPublish();
+    }, [store.publishError]);
+    
 
 
     // SAVES THE CURRENT LIST WITHOUT PUBLISHING IT
@@ -45,6 +68,7 @@ function WorkspaceScreen() {
         }
     }
 
+    const handleClose = () => setError(null);
 
 
     // let today = new Date();
@@ -52,15 +76,18 @@ function WorkspaceScreen() {
 
     function handlePublish() {
         store.checkPublish();
-        if (store.publishError){
-            // console.log("Error: " + store.publishError);
-            return;
+        if (store.publishError) {
+            setError(store.publishError);
         }
-        store.publishList();
-        console.log("Published");
-        // history.push('/home');
-        return;
+        else {
+            console.log("publish");
+            store.publishList();
+            history.push('/home');
+        }
+
     }
+
+    
 
     if (store.currentList === null) {
         history.push('/home');
@@ -91,6 +118,20 @@ function WorkspaceScreen() {
         <div className="home-screen">
             <AppBanner />
             <Navbar />
+            <Modal
+                open={error !== null}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>                    
+                    <Typography variant="h4" sx= {{paddingBottom:"30px"}}>{error}</Typography>
+                    <Button variant="contained" 
+                        style={{ }}
+                        onClick={handleClose}
+                    >Cancel</Button>
+
+                </Box>
+            </Modal>
             <div id="workspace-edit">
                 <TextField
                     margin="normal"

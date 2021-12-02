@@ -223,13 +223,14 @@ function GlobalStoreContextProvider(props) {
                 });
             }
             case GlobalStoreActionType.SET_PUBLISH_ERROR: {
+                console.log("P " + payload);
                 return setStore({
+                    publishError: payload,
                     idNamePairs: store.idNamePairs,
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
-                    publishError: payload,
                     viewMode: store.viewMode,
                     openedLists: new Set(),
                     listMarkedForDeletion: null
@@ -248,7 +249,6 @@ function GlobalStoreContextProvider(props) {
     store.changeListName = async function (id, newName) {
         try{
             let response = await api.getTop5ListById(id);
-            console.log(response);
             if (response.data.success) {
                 let top5List = response.data.top5List;
                 top5List.name = newName;
@@ -321,7 +321,6 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getTop5ListPairsByUsername(auth.user.username);
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
-                console.log(pairsArray);
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                     payload: pairsArray
@@ -429,10 +428,12 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    store.checkPublish = async function () {
 
+    store.checkPublish = async function () {
+        console.log("CHECKING PUBLISH");
         for(let i = 0; i < store.currentList.items.length; i++){
             if(store.currentList.items[i] === "?"){
+                // store.setPublishError("Please fill all the items");
                 storeReducer({
                     type: GlobalStoreActionType.SET_PUBLISH_ERROR,
                     payload: "Please fill all the items"
@@ -442,35 +443,34 @@ function GlobalStoreContextProvider(props) {
         }
 
         if(store.currentList.name === ""){
-            storeReducer({
-                type: GlobalStoreActionType.SET_PUBLISH_ERROR,
-                payload: "Your list needs a name"
-            });
+            store.setPublishError("Your list needs a name");
+            return;
         }
         
         const response = await api.getPublishedTop5ListsByUsername(auth.user.username, store.currentList.name);
         if (response.data.success) {
             if (response.data.length > 0) {
-                storeReducer({
-                    type: GlobalStoreActionType.SET_PUBLISH_ERROR,
-                    payload: "You already have a list with this name"
-                });
+                store.setPublishError("You already have a list with this name");
             }
             else {
                 console.log(store.currentList);
-                storeReducer({
-                    type: GlobalStoreActionType.SET_PUBLISH_ERROR,
-                    payload: null
-                });
+                store.setPublishError(null);
             }
         }
 
     }
 
+    store.setPublishError = function (errorMsg) {
+        storeReducer({
+            type: GlobalStoreActionType.SET_PUBLISH_ERROR,
+            payload: errorMsg
+        });
+    }
+
     store.publishList = async function () {
         const response = await api.publishTop5List(store.currentList._id);
         if (response.data.success) {
-            store.loadIdNamePairs();
+            // store.loadIdNamePairs();
             return
         }
         else {
@@ -493,6 +493,7 @@ function GlobalStoreContextProvider(props) {
             payload: null
         });
     }
+
 
     return (
         <GlobalStoreContext.Provider value={{
