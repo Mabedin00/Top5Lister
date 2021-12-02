@@ -364,6 +364,37 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.likeList = async function (id) {
+        try{
+            let response = await api.likeTop5List(auth.user.username, id);
+            if (response.data.success) {
+                store.loadIdNamePairs();
+                console.log(auth.user.username + " liked " + id);
+            }
+            else {
+                console.log("API FAILED TO LIKE THE LIST");
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    store.dislikeList = async function (id) {
+        try{
+            let response = await api.dislikeTop5List(auth.user.username, id);
+            if (response.data.success) {
+                store.loadIdNamePairs();
+            }
+            else {
+                console.log("API FAILED TO DISLIKE THE LIST");
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
     store.deleteMarkedList = function () {
         store.deleteList(store.listMarkedForDeletion);
     }

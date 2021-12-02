@@ -16,7 +16,7 @@ export default function ListViewSection(props) {
 
     return (
         <div className="view-items">
-            <List id="edit-items" >
+            <List className="edit-items" >
                 {
                     list.items.map((item, index) => (
                         < div>

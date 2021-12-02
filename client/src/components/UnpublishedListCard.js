@@ -64,9 +64,6 @@ function UnpublishedListCard(props) {
             
         }
     }
-    function handleUpdateText(event) {
-        setText(event.target.value);
-    }
     const d = new Date(idNamePair.publishedDate);
     const date = d.toDateString().slice(4, 10) + ", "+ d.toDateString().slice(11, 15)
 
@@ -84,7 +81,7 @@ function UnpublishedListCard(props) {
             }}
         >
             <Grid container spacing={4}>
-                <Grid item xs={8}>
+                <Grid item xs={9}>
                     <div className="list-details">
                         <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}>{idNamePair.name}</Box> 
                         <Box sx={{ p: 1, flexGrow: 1 }}> {"By: " + idNamePair.ownerUsername} </Box>
@@ -108,11 +105,11 @@ function UnpublishedListCard(props) {
                             > Edit  </Button>
                     </div>
                 </Grid>
-                <Grid item xs={4} 
+                <Grid item xs={3} 
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                            alignItems: 'flex-end',
+                        alignItems: 'flex-end',
                     }}
                 >
                     <Box>

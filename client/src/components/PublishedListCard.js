@@ -10,30 +10,24 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import ListViewSection from './ListViewSection'
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import Typography from '@mui/material/Typography';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import AuthContext from '../auth'
+
+
 
 
 function PublishedListCard(props) {
+    const numeral = require('numeral');
     const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
     const [editActive, setEditActive] = useState(false);
     const [text, setText] = useState("");
     const [isOpen, setOpen] = useState(false);
     const { idNamePair } = props;
 
 
-    function handleLoadList(event, id) {
-        if (!event.target.disabled) {
-            // CHANGE THE CURRENT LIST
-            store.setCurrentList(id);
-        }
-    }
-
-    function toggleEdit() {
-        let newActive = !editActive;
-        if (newActive) {
-            store.setIsListNameEditActive();
-        }
-        setEditActive(newActive);
-    }
 
     async function handleDeleteList(event, id) {
         event.stopPropagation();
@@ -50,21 +44,22 @@ function PublishedListCard(props) {
 
     }
 
-    function handleKeyPress(event) {
-        if (event.code === "Enter") {
-            let id = event.target.id.substring("list-".length);
-            if (text.length > 0) {
-                store.changeListName(id, text);
-                toggleEdit();
-            }
-            else{
-                store.changeListName(id, idNamePair.name);
-                toggleEdit();
-            }
-            
-        }
+    function isLiked(){
+        return idNamePair.likedBy.includes(auth.user.username);
+    }
+
+    function isDisliked(){
+        return idNamePair.dislikedBy.includes(auth.user.username);
+    }
+
+
+    function handleLike(){
+        store.likeList(idNamePair._id);
     }
     
+    function handleDislike(){
+        store.dislikeList(idNamePair._id);
+    }
 
     const d = new Date(idNamePair.publishedDate);
     const date = d.toDateString().slice(4, 10) + ", "+ d.toDateString().slice(11, 15)
@@ -83,7 +78,7 @@ function PublishedListCard(props) {
             }}
         >
             <Grid container spacing={4}>
-                <Grid item xs={8}>
+                <Grid item xs={9}>
                     <div className="list-details">
                         <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}>{idNamePair.name}</Box> 
                         <Box sx={{ p: 1, flexGrow: 1 }}> {"By: " + idNamePair.ownerUsername} </Box>
@@ -97,11 +92,32 @@ function PublishedListCard(props) {
                         <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " + date } </Box> 
                     </div>
                 </Grid>
-                <Grid item xs={4} 
+                <Grid item xs={2}
+                    sx={{
+                        display: 'flex',    
+                        flexDirection: 'column',    
+                        alignItems: 'flex-end',
+
+                    }}
+                >
+                    <Box>
+                        <IconButton onClick={() => {handleLike()}} aria-label='thumbs-up'>
+                            <ThumbUpIcon style={{fontSize:'36pt', fill: isLiked() ? "blue" : "" }} />
+                            <Typography variant="h4" component="h6"> {numeral(idNamePair.likes).format('0,a')}</Typography>
+                        </IconButton>
+                    </Box>
+                    <Box>
+                        <IconButton onClick={() => {handleDislike()}} aria-label='thumbs-down'>
+                            <ThumbDownIcon style={{fontSize:'36pt', fill: isDisliked() ? "blue" : ""}} />
+                            <Typography variant="h4" component="h6"> {numeral(idNamePair.dislikes).format('0,a')}</Typography>
+                        </IconButton>
+                    </Box>
+                </Grid>
+                <Grid item xs={1} 
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                            alignItems: 'flex-end',
+                        alignItems: 'flex-end',
                     }}
                 >
                     <Box>
