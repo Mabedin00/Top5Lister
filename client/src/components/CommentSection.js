@@ -12,15 +12,15 @@ export default function CommentSection(props) {
     
     return (
         <div className="comment-section">
-            <List id="comments" >
+            {/* <List id="comments" >
                 {
                     list.comments.map((comment) => (
                         < div>
-                            {index + 1 + ". " + item}
+                            
                         </div>
                     ))
                 }
-            </List>
+            </List> */}
         </div>
     )
     

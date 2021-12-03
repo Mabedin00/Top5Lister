@@ -46,10 +46,13 @@ export default function AllListsScreen() {
     }
 
     return (
-        <div id="list-selector-list">
-            {
-                listCard
-            }
+        <div id="all-lists">
+            <div id="list-selector-list">
+                {
+                    listCard
+                }
+            </div>
         </div>
+
     )
 }

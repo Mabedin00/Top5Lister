@@ -10,6 +10,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import ListViewSection from './ListViewSection'
+import CommentSection from './CommentSection';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import Typography from '@mui/material/Typography';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
@@ -32,11 +33,12 @@ function PublishedListCard(props) {
         store.markListForDeletion(id);
     }
 
-    function handleOpenList(event, id) {
+    function handleOpenList(event) {
         event.stopPropagation();
         setOpen(true);
+        store.viewList(idNamePair._id);
     }
-    function handleCloseList(event, id) {
+    function handleCloseList(event) {
         event.stopPropagation();
         setOpen(false);
 
@@ -64,6 +66,7 @@ function PublishedListCard(props) {
     const d = new Date(idNamePair.publishedDate);
     const date = d.toDateString().slice(4, 10) + ", "+ d.toDateString().slice(11, 15)
 
+
     let cardElement =
         <ListItem
             id={idNamePair._id}
@@ -86,10 +89,12 @@ function PublishedListCard(props) {
                             isOpen ? 
                             <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}> 
                                 <ListViewSection list={idNamePair} />
+                                <CommentSection />
                             </Box> : 
                             <div />
                         }
                         <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " + date } </Box> 
+                        <Box sx={{fontSize: 12, p: 1, flexGrow: 1 }}> {"Views: " + idNamePair.views} </Box>
                     </div>
                 </Grid>
                 <Grid item xs={2}
@@ -121,7 +126,7 @@ function PublishedListCard(props) {
                     }}
                 >
                     { 
-                        store.view === 'my' ?    
+                        store.viewMode === 'my' ?    
                             <Box>
                                 <IconButton onClick={(event) => {
                                     handleDeleteList(event, idNamePair._id)

@@ -359,7 +359,6 @@ function GlobalStoreContextProvider(props) {
     store.reloadIdNamePairs =  function () {
         if (store.viewMode === "my") store.loadIdNamePairs();
         else if (store.viewMode === "all") {
-            console.log("reload all");
             store.loadPublishedLists();
         }
     }
@@ -409,6 +408,21 @@ function GlobalStoreContextProvider(props) {
             }
             else {
                 console.log("API FAILED TO DISLIKE THE LIST");
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+    store.viewList = async function (id) {
+        try{
+            let response = await api.viewTop5List(id);
+            if (response.data.success) {
+                store.reloadIdNamePairs();
+            }
+            else {
+                console.log("API FAILED TO VIEW THE LIST");
             }
         }
         catch(err){
