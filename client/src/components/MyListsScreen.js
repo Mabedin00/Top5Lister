@@ -52,6 +52,7 @@ export default function MyListsScreen() {
                 gap: '1rem',
                 }}>
             {
+                store.idNamePairs !== undefined ?
                 store.idNamePairs.map((pair) => (
                     (pair.isPublished) ? 
                         <PublishedListCard
@@ -65,6 +66,8 @@ export default function MyListsScreen() {
                             selected={false}
                         />
                 ))
+                :
+                <Typography>Loading...</Typography>
             }
             </List>;
     }

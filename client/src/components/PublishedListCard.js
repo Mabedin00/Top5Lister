@@ -22,8 +22,6 @@ function PublishedListCard(props) {
     const numeral = require('numeral');
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
-    const [editActive, setEditActive] = useState(false);
-    const [text, setText] = useState("");
     const [isOpen, setOpen] = useState(false);
     const { idNamePair } = props;
 
@@ -54,10 +52,12 @@ function PublishedListCard(props) {
 
 
     function handleLike(){
+        console.log(idNamePair.likedBy.length);
         store.likeList(idNamePair._id);
     }
     
     function handleDislike(){
+        console.log("w");
         store.dislikeList(idNamePair._id);
     }
 
@@ -103,13 +103,13 @@ function PublishedListCard(props) {
                     <Box>
                         <IconButton onClick={() => {handleLike()}} aria-label='thumbs-up'>
                             <ThumbUpIcon style={{fontSize:'36pt', fill: isLiked() ? "blue" : "" }} />
-                            <Typography variant="h4" component="h6"> {numeral(idNamePair.likes).format('0,a')}</Typography>
+                            <Typography variant="h4" component="h6"> {numeral(idNamePair.likedBy.length).format('0,a')}</Typography>
                         </IconButton>
                     </Box>
                     <Box>
                         <IconButton onClick={() => {handleDislike()}} aria-label='thumbs-down'>
                             <ThumbDownIcon style={{fontSize:'36pt', fill: isDisliked() ? "blue" : ""}} />
-                            <Typography variant="h4" component="h6"> {numeral(idNamePair.dislikes).format('0,a')}</Typography>
+                            <Typography variant="h4" component="h6"> {numeral(idNamePair.dislikedBy.length).format('0,a')}</Typography>
                         </IconButton>
                     </Box>
                 </Grid>
@@ -120,13 +120,17 @@ function PublishedListCard(props) {
                         alignItems: 'flex-end',
                     }}
                 >
-                    <Box>
-                        <IconButton onClick={(event) => {
-                            handleDeleteList(event, idNamePair._id)
-                        }} aria-label='delete'>
-                            <DeleteIcon style={{fontSize:'36pt'}} />
-                        </IconButton>
-                    </Box>
+                    { 
+                        store.view === 'my' ?    
+                            <Box>
+                                <IconButton onClick={(event) => {
+                                    handleDeleteList(event, idNamePair._id)
+                                }} aria-label='delete'>
+                                    <DeleteIcon style={{fontSize:'36pt'}} />
+                                </IconButton>
+                            </Box> :
+                            <div/>
+                    }
                     <Box>
                        {    
                             isOpen ? 

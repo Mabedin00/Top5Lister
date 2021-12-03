@@ -10,12 +10,14 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import { useHistory } from 'react-router-dom'
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
 export default function AppBanner() {
     const { auth } = useContext(AuthContext);
     const { store } = useContext(GlobalStoreContext);
     const [anchorEl, setAnchorEl] = useState(null);
+    const history = useHistory();
     const isMenuOpen = Boolean(anchorEl);
 
     const style = {
@@ -37,6 +39,7 @@ export default function AppBanner() {
     const handleLogout = () => {
         handleMenuClose();
         auth.logoutUser();
+        history.push('/');
     }
 
     const menuId = 'primary-search-account-menu';

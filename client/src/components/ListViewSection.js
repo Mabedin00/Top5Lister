@@ -19,7 +19,7 @@ export default function ListViewSection(props) {
             <List className="edit-items" >
                 {
                     list.items.map((item, index) => (
-                        < div>
+                        < div key = {index}>
                             {index + 1 + ". " + item}
                         </div>
                     ))

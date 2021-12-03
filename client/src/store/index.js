@@ -2,12 +2,6 @@ import { createContext, useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import api from '../api'
 import AuthContext from '../auth'
-/*
-    This is our global data store. Note that it uses the Flux design pattern,
-    which makes use of things like actions and reducers. 
-    
-    @author McKilla Gorilla
-*/
 
 // THIS IS THE CONTEXT WE'LL USE TO SHARE OUR STORE
 export const GlobalStoreContext = createContext({});
@@ -341,6 +335,34 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.loadPublishedLists = async function () {
+        try{
+            const response = await api.getPublishedTop5Lists();
+            console.log(response.data);
+            if (response.data.success) {
+                let publishedLists = response.data.data;
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    payload: publishedLists
+                });
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        catch(err){
+            let errorMsg = err.response.data.errorMessage;
+            console.log(errorMsg);
+        }   
+    }
+
+    store.reloadIdNamePairs =  function () {
+        if (store.viewMode === "my") store.loadIdNamePairs();
+        else if (store.viewMode === "all") {
+            console.log("reload all");
+            store.loadPublishedLists();
+        }
+    }
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
     // OF A LIST, WHICH INCLUDES USING A VERIFICATION MODAL. THE
     // FUNCTIONS ARE markListForDeletion, deleteList, deleteMarkedList,
@@ -368,8 +390,7 @@ function GlobalStoreContextProvider(props) {
         try{
             let response = await api.likeTop5List(auth.user.username, id);
             if (response.data.success) {
-                store.loadIdNamePairs();
-                console.log(auth.user.username + " liked " + id);
+                store.reloadIdNamePairs();
             }
             else {
                 console.log("API FAILED TO LIKE THE LIST");
@@ -384,7 +405,7 @@ function GlobalStoreContextProvider(props) {
         try{
             let response = await api.dislikeTop5List(auth.user.username, id);
             if (response.data.success) {
-                store.loadIdNamePairs();
+                store.reloadIdNamePairs();
             }
             else {
                 console.log("API FAILED TO DISLIKE THE LIST");
