@@ -187,11 +187,9 @@ checkCommunityList = async (top5List) => {
         if (err) {
         }
         if (!communityList) {
-            console.log("CREATING COMMUNITY LIST");
             createCommunityList(top5List);
         }
         else {
-            console.log("UPDATING COMMUNITY LIST");
             // updateCommunityList(top5List, communityList);    
         }
     }).catch(err => console.log(err))
@@ -209,8 +207,6 @@ createCommunityList = async (top5List) => {
         name: top5List.name,
         items: listItem,
     });
-    console.log("----------------------------------");
-    console.log("communityList: " + JSON.stringify(communityList));
     communityList
         .save()
         .then(() => {
@@ -290,6 +286,19 @@ getPublishedTop5Lists = async (req, res) => {
             return res.status(200).json({ success: true, data: [], error: `Top 5 Lists not found` })
         }
         return res.status(200).json({ success: true, data: top5Lists })
+    }).catch(err => console.log(err))
+}
+
+// GET ALL COMMUNITY LISTS
+getCommunityLists = async (req, res) => {
+    await CommunityList.find({}, (err, communityLists) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!communityLists.length) {
+            return res.status(200).json({ success: true, data: [], error: `Community Lists not found` })
+        }
+        return res.status(200).json({ success: true, data: communityLists })
     }).catch(err => console.log(err))
 }
 
@@ -467,6 +476,7 @@ module.exports = {
     getPublishedTop5ListsByUsername,
     likeTop5List,
     getListByString,
+    getCommunityLists,
     dislikeTop5List,
     viewTop5List,
     commentTop5List,

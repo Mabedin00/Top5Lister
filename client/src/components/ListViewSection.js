@@ -11,7 +11,26 @@ export default function ListViewSection(props) {
     const { store } = useContext(GlobalStoreContext);
     const { list } = props
     
-    
+    if (store.viewMode === 'community') {
+        return (
+            <div className="view-items">
+                <List className="edit-items" >
+                    {
+                        list.items.map((item, index) => (
+                            <div key = {index}>
+                                < div >
+                                    {index + 1 + ". " + item.itemName}
+                                </div>
+                                <div id="votes">
+                                    {"(" + item.votes + " votes)"}
+                                </div>
+                            </div>
+                        ))
+                    }
+                </List>
+            </div>
+        )
+    }
 
     return (
         <div className="view-items">

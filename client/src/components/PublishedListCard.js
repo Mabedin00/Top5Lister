@@ -24,7 +24,7 @@ function PublishedListCard(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
     const [isOpen, setOpen] = useState(false);
-    const { idNamePair } = props;
+    const { idNamePair, isCommunityList } = props;
 
 
 
@@ -61,7 +61,8 @@ function PublishedListCard(props) {
         store.dislikeList(idNamePair._id);
     }
 
-    const d = new Date(idNamePair.publishedDate);
+
+    const d = isCommunityList ? new Date(idNamePair.updatedAt) : new Date(idNamePair.publishedDate);
     const date = d.toDateString().slice(4, 10) + ", "+ d.toDateString().slice(11, 15)
 
 
@@ -82,7 +83,11 @@ function PublishedListCard(props) {
                 <Grid item xs={10}>
                     <div className="list-details">
                         <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}>{idNamePair.name}</Box> 
-                        <Box sx={{ p: 1, flexGrow: 1 }}> {"By: " + idNamePair.ownerUsername} </Box>
+                        {
+                            isCommunityList ?
+                            <div /> :
+                            <Box sx={{ p: 1, flexGrow: 1 }}> {"By: " + idNamePair.ownerUsername} </Box>
+                        }
                         {
                             isOpen ? 
                             <Box sx={{ display: "flex", gap: 1, fontSize: 24,  p: 1, flexGrow: 1 }}> 
@@ -91,7 +96,7 @@ function PublishedListCard(props) {
                             </Box> : 
                             <div />
                         }
-                        <Box sx={{ p: 1, flexGrow: 1 }}> {"Published: " + date } </Box> 
+                        <Box sx={{ p: 1, flexGrow: 1 }}> {isCommunityList ? "Updated: " + date : "Published: " + date } </Box> 
                         <Box sx={{fontSize: 12, p: 1, flexGrow: 1 }}> {"Views: " + idNamePair.views} </Box>
                     </div>
                 </Grid>
@@ -135,7 +140,7 @@ function PublishedListCard(props) {
                             <div/>
                     }
                     <Box>
-                       {    
+                    {    
                             isOpen ? 
                             <IconButton aria-label='drop-up' 
                                 onClick={(event) => {

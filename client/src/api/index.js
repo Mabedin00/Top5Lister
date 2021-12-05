@@ -27,6 +27,8 @@ export const getPublishedTop5ListByUsername = (username, name) => api.get(`/top5
 export const getPublishedTop5ListsByUsername = (username) => api.get(`/top5lists/${username}`);
 export const getListByString = (query, flag,username) => api.get(`/top5listquery/${query}/${flag}/${username}`);
 
+export const getCommunityLists = () => api.get(`/communitylists/`);
+
 
 export const getLoggedIn = () => api.get(`/loggedIn/`);
 export const registerUser = (payload) => api.post(`/register/`, payload);
@@ -41,6 +43,7 @@ const apis = {
     getPublishedTop5ListByUsername,
     getPublishedTop5ListsByUsername,
     getPublishedTop5Lists,
+    getCommunityLists,
     publishTop5List,
     getListByString,
     updateTop5ListById,

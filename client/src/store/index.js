@@ -446,7 +446,26 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
-
+    store.loadCommunityLists = async function () {
+        try{
+            const response = await api.getCommunityLists();
+            console.log(response);
+            if (response.data.success) {
+                let communityList = response.data.data;
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    payload: communityList
+                });
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        catch(err){
+            let errorMsg = err.response.data.errorMessage;
+            console.log(err);
+        }
+    }
 
     store.reloadIdNamePairs =  function () {
         if (store.query === undefined) return;
