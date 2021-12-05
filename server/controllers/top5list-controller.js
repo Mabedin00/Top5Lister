@@ -1,5 +1,8 @@
 const Top5List = require('../models/top5list-model');
 const User = require('../models/user-model');
+const CommunityList = require('../models/communitytop5list-model');
+const { createCollection } = require('../models/top5list-model');
+
 
 createTop5List = (req, res) => {
     const body = req.body;
@@ -11,7 +14,6 @@ createTop5List = (req, res) => {
     }
 
     const top5List = new Top5List(body);
-    console.log("creating q: " + JSON.stringify(req.body));
     if (!top5List) {
         return res.status(400).json({ success: false, error: err })
     }
@@ -39,7 +41,6 @@ createTop5List = (req, res) => {
 
 updateTop5List = async (req, res) => {
     const body = req.body
-    console.log("updateTop5List: " + JSON.stringify(body));
     if (!body) {
         return res.status(400).json({
             success: false,
@@ -48,7 +49,6 @@ updateTop5List = async (req, res) => {
     }
 
     Top5List.findOne({ _id: req.params.id }, (err, top5List) => {
-        console.log("top5List found: " + JSON.stringify(top5List));
         if (err) {
             return res.status(404).json({
                 err,
@@ -61,7 +61,6 @@ updateTop5List = async (req, res) => {
         top5List
             .save()
             .then(() => {
-                console.log("SUCCESS!!!");
                 return res.status(200).json({
                     success: true,
                     id: top5List._id,
@@ -119,7 +118,6 @@ getTop5ListPairs = async (req, res) => {
             return res.status(400).json({ success: false, error: err })
         }
         if (!top5Lists) {
-            console.log("!top5Lists.length");
             return res
                 .status(404)
                 .json({ success: false, error: 'Top 5 Lists not found' })
@@ -149,7 +147,7 @@ getTop5ListPairs = async (req, res) => {
 }
 
 publishTop5List = async (req, res) => {
-    await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
+    await Top5List.findById( { _id: req.params.id }, async (err, top5List) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -161,6 +159,10 @@ publishTop5List = async (req, res) => {
         top5List.isPublished = true;
         top5List.publishedDate = Date.now();
         top5List.views = 0;
+
+        console.log("FINDING A COMMUNITY LIST WITH THE SAME NAME AS THE TOP 5 LIST");
+
+        checkCommunityList(top5List);
 
         top5List
             .save()
@@ -178,6 +180,45 @@ publishTop5List = async (req, res) => {
                 })
             })
     })
+}
+
+checkCommunityList = async (top5List) => {
+    await CommunityList.findOne({ name: {$regex : new RegExp(top5List.name, "i")} }, (err, communityList) => {
+        if (err) {
+        }
+        if (!communityList) {
+            console.log("CREATING COMMUNITY LIST");
+            createCommunityList(top5List);
+        }
+        else {
+            console.log("UPDATING COMMUNITY LIST");
+            // updateCommunityList(top5List, communityList);    
+        }
+    }).catch(err => console.log(err))
+}
+
+createCommunityList = async (top5List) => {
+    let listItem = top5List.items.map((item,index) => {
+        return {
+            itemName: item,
+            votes: 5-index,
+        }
+    });
+
+    let communityList = new CommunityList({
+        name: top5List.name,
+        items: listItem,
+    });
+    console.log("----------------------------------");
+    console.log("communityList: " + JSON.stringify(communityList));
+    communityList
+        .save()
+        .then(() => {
+            console.log("SUCCESS!!!");
+        })
+        .catch(error => {
+            console.log("FAILURE: " + JSON.stringify(error));
+        })
 }
 
 // GET PUBLISHED TOP 5 LISTS BY USERNAME WITH A NAME (CASE INSENSITIVE)
@@ -387,7 +428,6 @@ getTop5ListPairsByUsername = async (req, res) => {
             return res.status(400).json({ success: false, error: err })
         }
         if (!top5Lists.length) {
-            console.log("!top5Lists.length");
             return res
                 .status(404)
                 .json({ success: false, error: `Top 5 Lists not found` })
@@ -396,7 +436,6 @@ getTop5ListPairsByUsername = async (req, res) => {
         let pairs = [];
         for (let key in top5Lists) {
             let list = top5Lists[key];
-            console.log("list: " + JSON.stringify(list));
             let pair = {
                 _id: list._id,
                 name: list.name,
