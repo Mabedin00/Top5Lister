@@ -472,6 +472,7 @@ function GlobalStoreContextProvider(props) {
         if (store.query === "" ) {
             if (store.viewMode === "my") store.loadIdNamePairs();
             else if (store.viewMode === "all") store.loadPublishedLists();
+            else if (store.viewMode === "community") store.loadCommunityLists();
         }
         else{
             if (store.viewMode === "user") store.loadListsByUsername(store.query);
@@ -504,7 +505,14 @@ function GlobalStoreContextProvider(props) {
 
     store.likeList = async function (id) {
         try{
-            let response = await api.likeTop5List(auth.user.username, id);
+            let response;
+
+            if (store.viewMode === "community") {
+                response = await api.likeCommunityList(auth.user.username, id);
+            }
+            else{
+                response = await api.likeTop5List(auth.user.username, id);
+            }
             if (response.data.success) {
                 store.reloadIdNamePairs();
             }
@@ -519,7 +527,14 @@ function GlobalStoreContextProvider(props) {
 
     store.dislikeList = async function (id) {
         try{
-            let response = await api.dislikeTop5List(auth.user.username, id);
+            let response;
+            if (store.viewMode === "community") {
+                response = await api.dislikeCommunityList(auth.user.username, id);
+            }
+            else {
+                response = await api.dislikeTop5List(auth.user.username, id);
+            }
+
             if (response.data.success) {
                 store.reloadIdNamePairs();
             }
@@ -534,7 +549,13 @@ function GlobalStoreContextProvider(props) {
 
     store.viewList = async function (id) {
         try{
-            let response = await api.viewTop5List(id);
+            let response;
+            if (store.viewMode === "community") {
+                response = await api.viewCommunityList(id);
+            }
+            else {
+                response = await api.viewTop5List(id);
+            }
             if (response.data.success) {
                 store.reloadIdNamePairs();
             }
@@ -600,7 +621,13 @@ function GlobalStoreContextProvider(props) {
     store.commentOnList = async function (comment, id) {
         try{
             const payload = { comment: comment};
-            let response = await api.commentTop5List(auth.user.username, id, payload);
+            let response;
+            if (store.viewMode === "community") {
+                response = await api.commentCommunityList(auth.user.username, id, payload);
+            }
+            else {
+                response = await api.commentTop5List(auth.user.username, id, payload);
+            }
             if (response.data.success) {
                 store.reloadIdNamePairs();
 

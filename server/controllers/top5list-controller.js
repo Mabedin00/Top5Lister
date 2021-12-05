@@ -344,6 +344,46 @@ likeTop5List = async (req, res) => {
     })
 }
 
+likeCommunityList = async (req, res) => {
+    await CommunityList.findById({ _id: req.params.id }, (err, communityList) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!communityList) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Community List not found` })
+        }
+        if (communityList.likedBy.includes(req.params.username)) {
+            return res
+                .status(400)
+                .json({ success: false, error: `Community List already liked` })
+        }
+        
+        if (communityList.dislikedBy.includes(req.params.username)) {
+            communityList.dislikedBy.pull(req.params.username);
+            communityList.likedBy.push(req.params.username);
+            communityList.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: communityList._id,
+                    message: 'Community List liked!',
+                })
+            })
+        }
+        else {
+            communityList.likedBy.push(req.params.username);
+            communityList.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: communityList._id,
+                    message: 'Community List liked!',
+                })
+            })
+        }
+    })
+}
+
 // DISLIKE A TOP 5 LIST
 dislikeTop5List = async (req, res) => {
     await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
@@ -384,6 +424,45 @@ dislikeTop5List = async (req, res) => {
     })
 }
 
+dislikeCommunityList = async (req, res) => {
+    await CommunityList.findById({ _id: req.params.id }, (err, communityList) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!communityList) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Community List not found` })
+        }
+        if (communityList.dislikedBy.includes(req.params.username)) {
+            return res
+                .status(400)
+                .json({ success: false, error: `Community List already disliked` })
+        }
+        if (communityList.likedBy.includes(req.params.username)) {
+            communityList.likedBy.pull(req.params.username);
+            communityList.dislikedBy.push(req.params.username);
+            communityList.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: communityList._id,
+                    message: 'Community List disliked!',
+                })
+            })
+        }
+        else {
+            communityList.dislikedBy.push(req.params.username);
+            communityList.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: communityList._id,
+                    message: 'Community List disliked!',
+                })
+            })
+        }   
+    })
+}
+
 viewTop5List = async (req, res) => {
     await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
         if (err) {
@@ -400,6 +479,27 @@ viewTop5List = async (req, res) => {
                 success: true,
                 id: top5List._id,
                 message: 'Top 5 List viewed!',
+            })
+        })
+    })
+}
+
+viewCommunityList = async (req, res) => {
+    await CommunityList.findById({ _id: req.params.id }, (err, communityList) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!communityList) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Community List not found` })
+        }
+        communityList.views += 1;
+        communityList.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                id: communityList._id,
+                message: 'Community List viewed!',
             })
         })
     })
@@ -425,6 +525,31 @@ commentTop5List = async (req, res) => {
                 success: true,
                 id: top5List._id,
                 message: 'Top 5 List commented!',
+            })
+        })
+    })
+}
+
+commentCommunityList = async (req, res) => {
+    await CommunityList.findById({ _id: req.params.id }, (err, communityList) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!communityList) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Community List not found` })
+        }
+        const comment = {
+            username: req.params.username,
+            comment: req.body.comment,
+        }
+        communityList.comments.push(comment);
+        communityList.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                id: communityList._id,
+                message: 'Community List commented!',
             })
         })
     })
@@ -479,7 +604,11 @@ module.exports = {
     getCommunityLists,
     dislikeTop5List,
     viewTop5List,
+    viewCommunityList,
+    dislikeCommunityList,
+    likeCommunityList,
     commentTop5List,
+    commentCommunityList,
     getPublishedTop5Lists,
     getTop5ListPairsByUsername,   
     publishTop5List,

@@ -53,6 +53,11 @@ body {
 
 }
 
+#community-list {
+  overflow-y: scroll;
+  height: 70%;
+}
+
 /* Make buttons center vertically with a gap between them */
 .splash-button-container{
     display: flex;

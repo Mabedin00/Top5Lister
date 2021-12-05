@@ -22,6 +22,14 @@ router.get('/top5list/:username/:name', auth.verify, Top5ListController.getPubli
 router.get('/top5lists/:username', auth.verify, Top5ListController.getPublishedTop5ListsByUsername)
 
 router.get('/communitylists/', Top5ListController.getCommunityLists)
+router.put('/communitylist/view/:id', auth.verify, Top5ListController.viewCommunityList)
+router.put('/communitylist/dislike/:username/:id', auth.verify, Top5ListController.dislikeCommunityList)
+router.put('/communitylist/like/:username/:id', auth.verify, Top5ListController.likeCommunityList)
+router.put('/communitylist/comment/:username/:id', auth.verify, Top5ListController.commentCommunityList)
+
+
+
+
 
 
 router.post('/register', UserController.registerUser)

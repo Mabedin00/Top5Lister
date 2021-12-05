@@ -28,6 +28,12 @@ export const getPublishedTop5ListsByUsername = (username) => api.get(`/top5lists
 export const getListByString = (query, flag,username) => api.get(`/top5listquery/${query}/${flag}/${username}`);
 
 export const getCommunityLists = () => api.get(`/communitylists/`);
+export const viewCommunityList = (id) => api.put(`/communitylist/view/${id}`);
+export const dislikeCommunityList = (username, id) => api.put(`/communitylist/dislike/${username}/${id}`);
+export const likeCommunityList = (username, id) => api.put(`/communitylist/like/${username}/${id}`);
+export const commentCommunityList = (username, id, payload) => api.put(`/communitylist/comment/${username}/${id}`, payload);
+
+
 
 
 export const getLoggedIn = () => api.get(`/loggedIn/`);
@@ -44,15 +50,19 @@ const apis = {
     getPublishedTop5ListsByUsername,
     getPublishedTop5Lists,
     getCommunityLists,
+    viewCommunityList,
     publishTop5List,
     getListByString,
     updateTop5ListById,
     deleteTop5ListById,
     getTop5ListById,
     likeTop5List,
+    likeCommunityList,
     dislikeTop5List,
+    dislikeCommunityList,
     viewTop5List,
     commentTop5List,
+    commentCommunityList,
     getLoggedIn,
     registerUser,
     loginUser,
