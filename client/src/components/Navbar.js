@@ -29,6 +29,19 @@ export default function Navbar() {
         store.changeViewMode(viewMode);
     }
     
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            if (e.target.value.length > 0) {
+                if (store.viewMode === 'user') {
+                    store.loadListsByUsername(e.target.value);
+                } else {
+                    console.log('searching for group');
+                }
+            }
+        }
+    }
+    
+
     return (
         <div className="navbar">
             <Box display="flex"  alignItems="center">
@@ -67,6 +80,7 @@ export default function Navbar() {
                     name="query"
                     label="Search"
                     variant="filled"  
+                    onKeyPress={handleKeyPress}
                     size="small"
                     id="query"
                     sx = {{ marginLeft: '30px',

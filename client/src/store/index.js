@@ -369,6 +369,35 @@ function GlobalStoreContextProvider(props) {
         }   
     }
 
+    store.loadListsByUsername = async function (username) {
+        if (username === null) {
+            storeReducer({
+                type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                payload: []
+            });
+            return;
+        }
+        try{
+            const response = await api.getPublishedTop5ListsByUsername(username);
+            if (response.data.success) {
+                let publishedLists = response.data.data;
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
+                    payload: publishedLists
+                });
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        catch(err){
+            let errorMsg = err.response.data.errorMessage;
+            console.log(errorMsg);
+        }
+    }
+
+
+
     store.reloadIdNamePairs =  function () {
         if (store.viewMode === "my") store.loadIdNamePairs();
         else if (store.viewMode === "all") store.loadPublishedLists();
@@ -542,7 +571,7 @@ function GlobalStoreContextProvider(props) {
             return;
         }
         
-        const response = await api.getPublishedTop5ListsByUsername(auth.user.username, store.currentList.name);
+        const response = await api.getPublishedTop5ListByUsername(auth.user.username, store.currentList.name);
         if (response.data.success) {
             if (response.data.length > 0) {
                 store.setPublishError("You already have a list with this name");
