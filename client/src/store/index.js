@@ -1,6 +1,6 @@
 import { createContext, useContext, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import api from '../api'
+import api, { viewTop5List } from '../api'
 import AuthContext from '../auth'
 
 // THIS IS THE CONTEXT WE'LL USE TO SHARE OUR STORE
@@ -18,7 +18,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     OPEN_A_LIST: "OPEN_A_LIST",
     CLOSE_A_LIST: "CLOSE_A_LIST",
-    RELOAD_A_LIST: "RELOAD_A_LIST",
+    LOAD_QUERIED_LIST: "LOAD_QUERIED_LIST",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     CHANGE_VIEW: "CHANGE_VIEW",
@@ -39,6 +39,7 @@ function GlobalStoreContextProvider(props) {
         listMarkedForDeletion: null,
         openedLists: new Set(),
         viewMode: "my",
+        query: "",
         publishError: null,
     });
     const history = useHistory();
@@ -62,6 +63,7 @@ function GlobalStoreContextProvider(props) {
                     viewMode: store.viewMode,
                     openedLists: new Set(),
                     publishError: null,
+                    query: "",
                     listMarkedForDeletion: null
                 });
             }
@@ -76,6 +78,7 @@ function GlobalStoreContextProvider(props) {
                     publishError: null,
                     openedLists: new Set(),
                     viewMode: store.viewMode,
+                    query: "",
                     listMarkedForDeletion: null
                 })
             }
@@ -90,6 +93,7 @@ function GlobalStoreContextProvider(props) {
                     publishError: null,
                     openedLists: new Set(),
                     viewMode: store.viewMode,
+                    query: "",
                     listMarkedForDeletion: null
                 })
             }
@@ -102,6 +106,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     openedLists: new Set(),
                     publishError: null,
+                    query: "",
                     isItemEditActive: false,
                     viewMode: store.viewMode,
                     listMarkedForDeletion: null
@@ -116,6 +121,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     openedLists: store.openedLists,
                     publishError: null,
+                    query: "",
                     isItemEditActive: false,
                     viewMode: store.viewMode,
                     listMarkedForDeletion: payload
@@ -129,6 +135,7 @@ function GlobalStoreContextProvider(props) {
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
+                    query: "",
                     publishError: null,
                     viewMode: store.viewMode,
                     openedLists: store.openedLists,
@@ -145,6 +152,7 @@ function GlobalStoreContextProvider(props) {
                     isItemEditActive: false,
                     publishError: null,
                     viewMode: store.viewMode,
+                    query: "",
                     openedLists: new Set(),
                     listMarkedForDeletion: null
                 });
@@ -158,6 +166,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: false,
                     publishError: null,
                     isItemEditActive: true,
+                    query: "",
                     viewMode: store.viewMode,
                     openedLists: new Set(),
                     listMarkedForDeletion: null
@@ -172,6 +181,7 @@ function GlobalStoreContextProvider(props) {
                     isListNameEditActive: true,
                     isItemEditActive: false,
                     publishError: null,
+                    query: "",
                     viewMode: store.viewMode,
                     openedLists: new Set(),
                     listMarkedForDeletion: null
@@ -187,6 +197,7 @@ function GlobalStoreContextProvider(props) {
                     isItemEditActive: false,
                     publishError: null,
                     openedLists: new Set(),
+                    query: "",
                     listMarkedForDeletion: null,
                     viewMode: payload
                 });
@@ -199,6 +210,7 @@ function GlobalStoreContextProvider(props) {
                     publishError: null,
                     isListNameEditActive: false,
                     isItemEditActive: false,
+                    query: store.query,
                     openedLists: store.openedLists.add(payload),
                     listMarkedForDeletion: null,
                     viewMode: store.viewMode
@@ -214,18 +226,20 @@ function GlobalStoreContextProvider(props) {
                     isItemEditActive: false,
                     openedLists: store.openedLists.delete(payload),
                     listMarkedForDeletion: null,
+                    query: store.query,
                     viewMode: store.viewMode
                 });
             }
-            case GlobalStoreActionType.RELOAD_A_LIST: {
+            case GlobalStoreActionType.LOAD_QUERIED_LIST: {
                 return setStore({
-                    idNamePairs: store.idNamePairs,
+                    idNamePairs: payload.idNamePairs,
                     currentList: store.currentList,
                     newListCounter: store.newListCounter,
                     isListNameEditActive: false,
                     isItemEditActive: false,
                     publishError: null,
                     openedLists: store.openedLists,
+                    query: payload.query,
                     listMarkedForDeletion: null,
                     viewMode: store.viewMode
                 });
@@ -240,6 +254,7 @@ function GlobalStoreContextProvider(props) {
                     isItemEditActive: false,
                     viewMode: store.viewMode,
                     openedLists: new Set(),
+                    query: "",
                     listMarkedForDeletion: null
                 });
             }
@@ -348,6 +363,37 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.getListByString = async function (string) {
+        let flag = "0";
+        if (store.viewMode === "my") {
+            flag = "1";
+        }
+        try{
+            const response = await api.getListByString(string, flag, auth.user.username);
+            if (response.data.success) {
+                let top5List = response.data.data;
+                console.log(top5List);
+                let payload = {
+                    idNamePairs: top5List,
+                    query: string
+                };
+
+                storeReducer({
+                    type: GlobalStoreActionType.LOAD_QUERIED_LIST,
+                    payload: payload
+                });
+            }
+            else {
+                console.log("API FAILED TO GET THE LIST PAIRS");
+            }
+        }
+        catch(err){
+            console.log(store.query);
+            console.log(err);
+        }
+    }
+
+
     store.loadPublishedLists = async function () {
         try{
             const response = await api.getPublishedTop5Lists();
@@ -381,9 +427,13 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPublishedTop5ListsByUsername(username);
             if (response.data.success) {
                 let publishedLists = response.data.data;
+                let payload = {
+                    idNamePairs: publishedLists,
+                    query: username
+                };
                 storeReducer({
-                    type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
-                    payload: publishedLists
+                    type: GlobalStoreActionType.LOAD_QUERIED_LIST,
+                    payload: payload
                 });
             }
             else {
@@ -392,15 +442,23 @@ function GlobalStoreContextProvider(props) {
         }
         catch(err){
             let errorMsg = err.response.data.errorMessage;
-            console.log(errorMsg);
+            console.log(err);
         }
     }
 
 
 
     store.reloadIdNamePairs =  function () {
-        if (store.viewMode === "my") store.loadIdNamePairs();
-        else if (store.viewMode === "all") store.loadPublishedLists();
+        if (store.query === undefined) return;
+        if (store.query === "" ) {
+            if (store.viewMode === "my") store.loadIdNamePairs();
+            else if (store.viewMode === "all") store.loadPublishedLists();
+        }
+        else{
+            if (store.viewMode === "user") store.loadListsByUsername(store.query);
+            else  store.getListByString(store.query);
+        }
+        
     }
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
     // OF A LIST, WHICH INCLUDES USING A VERIFICATION MODAL. THE

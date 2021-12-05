@@ -133,10 +133,11 @@ getTop5ListPairs = async (req, res) => {
                     _id: list._id,
                     name: list.name,
                     ownerUsername: list.ownerUsername,
-                    likes: list.likedBy.length,
-                    dislikes: list.dislikedBy.length,
+                    likedBy: list.likedBy,
+                    dislikedBy: list.dislikedBy,    
                     isPublished: list.isPublished,
                     publishedDate: list.publishedDate,
+                    views: list.views,
                     items: list.items,
                     comments: list.comments,
                 };
@@ -148,7 +149,6 @@ getTop5ListPairs = async (req, res) => {
 }
 
 publishTop5List = async (req, res) => {
-    console.log("qweqe");
     await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
@@ -160,7 +160,8 @@ publishTop5List = async (req, res) => {
         }
         top5List.isPublished = true;
         top5List.publishedDate = Date.now();
-        // console.log("top5List.isPublished: " + top5List.isPublished);
+        top5List.views = 0;
+
         top5List
             .save()
             .then(() => {
@@ -180,10 +181,67 @@ publishTop5List = async (req, res) => {
 }
 
 // GET PUBLISHED TOP 5 LISTS BY USERNAME WITH A NAME (CASE INSENSITIVE)
-getPublishedTop5ListsByUsername = async (req, res) => {
-    
+getPublishedTop5ListByUsername = async (req, res) => {
     await Top5List.find({ ownerUsername: req.params.username, isPublished: true, name: {$regex : new RegExp(req.params.name, "i")}},
      (err, top5Lists) => {
+
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!top5Lists.length) {
+            return res.status(200).json({ success: true, data: [], error: `Top 5 Lists not found` })
+        }
+        return res.status(200).json({ success: true, data: top5Lists })
+    }).catch(err => console.log(err))
+}
+
+getPublishedTop5ListsByUsername = async (req, res) => {
+    await Top5List.find({ ownerUsername: req.params.username, isPublished: true},
+     (err, top5Lists) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!top5Lists.length) {
+            return res.status(404).json({ success: false, data: [], error: `Top 5 Lists not found` })
+        }
+        return res.status(200).json({ success: true, data: top5Lists })
+    }).catch(err => console.log(err))
+}
+
+// GET ALL LISTS BY USERNAME STARTING WITH A GIVEN STRING (CASE INSENSITIVE)
+getListByString = async (req, res) => {
+    let query = '^' + req.params.query; 
+    if (req.params.flag === "0") {
+        await Top5List.find({isPublished: true, name: {$regex : new RegExp(query, "i")}}, 
+        (err, top5Lists) => {
+                if (err) {
+                    return res.status(400).json({ success: false, error: err })
+                }
+                if (!top5Lists.length) {
+                    return res.status(404).json({ success: false, data: [], error: `Top 5 Lists not found` })
+                }
+                return res.status(200).json({ success: true, data: top5Lists })
+            }).catch(err => console.log(err));
+    }
+    else {  
+        await Top5List.find({ownerUsername: req.params.username, name: {$regex : new RegExp(query, "i")}}, 
+        (err, top5Lists) => {
+            console.log(top5Lists);
+                if (err) {
+                    
+                    return res.status(400).json({ success: false, error: err })
+                }
+                if (!top5Lists.length) {
+                    return res.status(404).json({ success: false, data: [], error: `Top 5 Lists not found` })
+                }
+                return res.status(200).json({ success: true, data: top5Lists })
+            }).catch(err => console.log(err));
+    }
+}
+
+// GET ALL PUBLISHED TOP 5 LISTS 
+getPublishedTop5Lists = async (req, res) => {
+    await Top5List.find({ isPublished: true }, (err, top5Lists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
         }
@@ -195,9 +253,135 @@ getPublishedTop5ListsByUsername = async (req, res) => {
 }
 
 
+// LIKE A TOP 5 LIST
+likeTop5List = async (req, res) => {
+    await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!top5List) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Top 5 List not found` })
+        }
+        if (top5List.likedBy.includes(req.params.username)) {
+            return res
+                .status(400)
+                .json({ success: false, error: `Top 5 List already liked` })
+        }
+          
+        if (top5List.dislikedBy.includes(req.params.username)) {
+            top5List.dislikedBy.pull(req.params.username);
+            top5List.likedBy.push(req.params.username);
+            top5List.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: top5List._id,
+                    message: 'Top 5 List liked!',
+                })
+            })
+        }
+        else {
+            top5List.likedBy.push(req.params.username);
+            top5List.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: top5List._id,
+                    message: 'Top 5 List liked!',
+                })
+            })
+        }
+    })
+}
+
+// DISLIKE A TOP 5 LIST
+dislikeTop5List = async (req, res) => {
+    await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!top5List) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Top 5 List not found` })
+        }
+        if (top5List.dislikedBy.includes(req.params.username)) {
+            return res
+                .status(400)
+                .json({ success: false, error: `Top 5 List already disliked` }) 
+        }
+        if (top5List.likedBy.includes(req.params.username)) {
+            top5List.likedBy.pull(req.params.username);
+            top5List.dislikedBy.push(req.params.username);
+            top5List.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: top5List._id,
+                    message: 'Top 5 List disliked!',
+                })
+            })
+        }
+        else {
+            top5List.dislikedBy.push(req.params.username);
+            top5List.save().then(() => {
+                return res.status(200).json({
+                    success: true,
+                    id: top5List._id,
+                    message: 'Top 5 List disliked!',
+                })
+            })
+        }
+    })
+}
+
+viewTop5List = async (req, res) => {
+    await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!top5List) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Top 5 List not found` })
+        }
+        top5List.views += 1;
+        top5List.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                id: top5List._id,
+                message: 'Top 5 List viewed!',
+            })
+        })
+    })
+}
+
+commentTop5List = async (req, res) => {
+    await Top5List.findById({ _id: req.params.id }, (err, top5List) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!top5List) {
+            return res
+                .status(404)
+                .json({ success: false, error: `Top 5 List not found` })
+        }
+        const comment = {
+            username: req.params.username,
+            comment: req.body.comment,
+        }
+        top5List.comments.push(comment);
+        top5List.save().then(() => {
+            return res.status(200).json({
+                success: true,
+                id: top5List._id,
+                message: 'Top 5 List commented!',
+            })
+        })
+    })
+}
+
 // GET ALL LIST PAIRS FROM A USERNAME
 getTop5ListPairsByUsername = async (req, res) => {
-    console.log(req.params)
     await Top5List.find({ ownerUsername: req.params.username }, (err, top5Lists) => {
         if (err) {
             return res.status(400).json({ success: false, error: err })
@@ -217,9 +401,10 @@ getTop5ListPairsByUsername = async (req, res) => {
                 _id: list._id,
                 name: list.name,
                 ownerUsername: list.ownerUsername,
-                likes: list.likedBy.length,
-                dislikes: list.dislikedBy.length,
+                likedBy: list.likedBy,
+                dislikedBy: list.dislikedBy,
                 isPublished: list.isPublished,
+                views: list.views,
                 items: list.items,
                 publishedDate: list.publishedDate,
                 comments: list.comments,
@@ -239,7 +424,14 @@ module.exports = {
     deleteTop5List,
     getTop5Lists,
     getTop5ListPairs,
+    getPublishedTop5ListByUsername,
     getPublishedTop5ListsByUsername,
+    likeTop5List,
+    getListByString,
+    dislikeTop5List,
+    viewTop5List,
+    commentTop5List,
+    getPublishedTop5Lists,
     getTop5ListPairsByUsername,   
     publishTop5List,
     getTop5ListById

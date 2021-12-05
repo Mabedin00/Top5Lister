@@ -36,6 +36,7 @@ export default function Navbar() {
                     store.loadListsByUsername(e.target.value);
                 } else {
                     console.log('searching for group');
+                    store.getListByString(e.target.value);
                 }
             }
         }

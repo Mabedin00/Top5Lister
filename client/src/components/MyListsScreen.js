@@ -33,7 +33,7 @@ export default function MyListsScreen() {
 
     
 
-
+    
     let listCard = "";
     let name = "";
     if (store.listMarkedForDeletion){

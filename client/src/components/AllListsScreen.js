@@ -17,7 +17,6 @@ export default function AllListsScreen() {
         store.loadPublishedLists();
     }, []);
 
-    console.log(store.idNamePairs);
     
     let listCard = "";
 
