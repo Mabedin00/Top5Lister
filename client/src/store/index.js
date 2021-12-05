@@ -18,6 +18,7 @@ export const GlobalStoreActionType = {
     SET_CURRENT_LIST: "SET_CURRENT_LIST",
     OPEN_A_LIST: "OPEN_A_LIST",
     CLOSE_A_LIST: "CLOSE_A_LIST",
+    RELOAD_A_LIST: "RELOAD_A_LIST",
     SET_ITEM_EDIT_ACTIVE: "SET_ITEM_EDIT_ACTIVE",
     SET_LIST_NAME_EDIT_ACTIVE: "SET_LIST_NAME_EDIT_ACTIVE",
     CHANGE_VIEW: "CHANGE_VIEW",
@@ -216,8 +217,20 @@ function GlobalStoreContextProvider(props) {
                     viewMode: store.viewMode
                 });
             }
+            case GlobalStoreActionType.RELOAD_A_LIST: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter,
+                    isListNameEditActive: false,
+                    isItemEditActive: false,
+                    publishError: null,
+                    openedLists: store.openedLists,
+                    listMarkedForDeletion: null,
+                    viewMode: store.viewMode
+                });
+            }
             case GlobalStoreActionType.SET_PUBLISH_ERROR: {
-                console.log("P " + payload);
                 return setStore({
                     publishError: payload,
                     idNamePairs: store.idNamePairs,
@@ -358,9 +371,7 @@ function GlobalStoreContextProvider(props) {
 
     store.reloadIdNamePairs =  function () {
         if (store.viewMode === "my") store.loadIdNamePairs();
-        else if (store.viewMode === "all") {
-            store.loadPublishedLists();
-        }
+        else if (store.viewMode === "all") store.loadPublishedLists();
     }
     // THE FOLLOWING 5 FUNCTIONS ARE FOR COORDINATING THE DELETION
     // OF A LIST, WHICH INCLUDES USING A VERIFICATION MODAL. THE
@@ -480,6 +491,25 @@ function GlobalStoreContextProvider(props) {
         }
     }
 
+    store.commentOnList = async function (comment, id) {
+        try{
+            const payload = { comment: comment};
+            let response = await api.commentTop5List(auth.user.username, id, payload);
+            if (response.data.success) {
+                store.reloadIdNamePairs();
+
+            }
+            else {
+                console.log("API FAILED TO COMMENT ON THE LIST");
+            }
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
+
+
     store.openAList = function (id) {
         storeReducer({
             type: GlobalStoreActionType.OPEN_A_LIST,
@@ -496,7 +526,6 @@ function GlobalStoreContextProvider(props) {
 
 
     store.checkPublish = async function () {
-        console.log("CHECKING PUBLISH");
         for(let i = 0; i < store.currentList.items.length; i++){
             if(store.currentList.items[i] === "?"){
                 // store.setPublishError("Please fill all the items");

@@ -12,7 +12,6 @@ export default function ListViewSection(props) {
     const { list } = props
     
     
-    console.log(list.items)
 
     return (
         <div className="view-items">

@@ -69,7 +69,33 @@ body {
     color: var(--swatch-comments) ;
     border-radius: 10px;
     padding-left:10px;
-    width: 80%;
+    font-size: 54px;
+    width: 100%;
+}
+
+.comment-section{
+    color: var(--swatch-dark-blue) ;
+    border-radius: 10px;
+    padding-left:10px;
+    width: 100%;
+    max-height: 350px;
+    
+}
+
+
+.comment{
+    background-color: var(--swatch-comments);
+    border-radius: 10px;
+    padding-left:  10px;
+    margin-bottom: 10px;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+
+}
+
+.comment-box{
+    width: 100%;
 }
 
 .splash-text{

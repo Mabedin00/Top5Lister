@@ -54,12 +54,10 @@ function PublishedListCard(props) {
 
 
     function handleLike(){
-        console.log(idNamePair.likedBy.length);
         store.likeList(idNamePair._id);
     }
     
     function handleDislike(){
-        console.log("w");
         store.dislikeList(idNamePair._id);
     }
 
@@ -81,15 +79,15 @@ function PublishedListCard(props) {
             }}
         >
             <Grid container spacing={4}>
-                <Grid item xs={9}>
+                <Grid item xs={10}>
                     <div className="list-details">
                         <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}>{idNamePair.name}</Box> 
                         <Box sx={{ p: 1, flexGrow: 1 }}> {"By: " + idNamePair.ownerUsername} </Box>
                         {
                             isOpen ? 
-                            <Box sx={{ fontSize: 24,  p: 1, flexGrow: 1 }}> 
+                            <Box sx={{ display: "flex", gap: 1, fontSize: 24,  p: 1, flexGrow: 1 }}> 
                                 <ListViewSection list={idNamePair} />
-                                <CommentSection />
+                                <CommentSection list={idNamePair} > </CommentSection>
                             </Box> : 
                             <div />
                         }
@@ -97,7 +95,7 @@ function PublishedListCard(props) {
                         <Box sx={{fontSize: 12, p: 1, flexGrow: 1 }}> {"Views: " + idNamePair.views} </Box>
                     </div>
                 </Grid>
-                <Grid item xs={2}
+                <Grid item xs={1}
                     sx={{
                         display: 'flex',    
                         flexDirection: 'column',    
