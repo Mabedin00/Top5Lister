@@ -45,10 +45,12 @@ function PublishedListCard(props) {
     }
 
     function isLiked(){
+        if (!auth.user) return false;
         return idNamePair.likedBy.includes(auth.user.username);
     }
 
     function isDisliked(){
+        if (!auth.user) return false;
         return idNamePair.dislikedBy.includes(auth.user.username);
     }
 
@@ -109,13 +111,13 @@ function PublishedListCard(props) {
                     }}
                 >
                     <Box>
-                        <IconButton onClick={() => {handleLike()}} aria-label='thumbs-up'>
-                            <ThumbUpIcon style={{fontSize:'36pt', fill: isLiked() ? "blue" : "" }} />
+                        <IconButton onClick={() => {handleLike()}} aria-label='thumbs-up'  disabled={!auth.user}>
+                            <ThumbUpIcon style={{fontSize:'36pt', fill: isLiked() ? "blue" : "" }}/>
                             <Typography variant="h4" component="h6"> {numeral(idNamePair.likedBy.length).format('0,a')}</Typography>
                         </IconButton>
                     </Box>
                     <Box>
-                        <IconButton onClick={() => {handleDislike()}} aria-label='thumbs-down'>
+                        <IconButton onClick={() => {handleDislike()}} aria-label='thumbs-down' disabled={!auth.user}>
                             <ThumbDownIcon style={{fontSize:'36pt', fill: isDisliked() ? "blue" : ""}} />
                             <Typography variant="h4" component="h6"> {numeral(idNamePair.dislikedBy.length).format('0,a')}</Typography>
                         </IconButton>

@@ -30,7 +30,7 @@ export default function SplashScreen() {
                     </Button> 
                 </div>
                 <div>
-                    <Button variant="contained" color="primary" >
+                    <Button variant="contained" color="primary" href = "/home/" >
                         Continue as Guest
                     </Button>
                 </div>

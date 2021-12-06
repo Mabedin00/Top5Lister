@@ -6,6 +6,7 @@ import AuthContext from '../auth'
 // THIS IS THE CONTEXT WE'LL USE TO SHARE OUR STORE
 export const GlobalStoreContext = createContext({});
 
+
 // THESE ARE ALL THE TYPES OF UPDATES TO OUR GLOBAL
 // DATA STORE STATE THAT CAN BE PROCESSED
 export const GlobalStoreActionType = {
@@ -31,6 +32,8 @@ export const GlobalStoreActionType = {
 // AVAILABLE TO THE REST OF THE APPLICATION
 function GlobalStoreContextProvider(props) {
     // THESE ARE ALL THE THINGS OUR DATA STORE WILL MANAGE
+    // SINCE WE'VE WRAPPED THE STORE IN THE AUTH CONTEXT WE CAN ACCESS THE USER HERE
+    const { auth } = useContext(AuthContext);
     const [store, setStore] = useState({
         idNamePairs: [],
         currentList: null,
@@ -46,8 +49,7 @@ function GlobalStoreContextProvider(props) {
     });
     const history = useHistory();
 
-    // SINCE WE'VE WRAPPED THE STORE IN THE AUTH CONTEXT WE CAN ACCESS THE USER HERE
-    const { auth } = useContext(AuthContext);
+
 
     // HERE'S THE DATA STORE'S REDUCER, IT MUST
     // HANDLE EVERY TYPE OF STATE CHANGE
@@ -467,7 +469,7 @@ function GlobalStoreContextProvider(props) {
     store.loadPublishedLists = async function () {
         try{
             const response = await api.getPublishedTop5Lists();
-            console.log(response.data);
+            console.log(response);
             if (response.data.success) {
                 let publishedLists = response.data.data;
                 storeReducer({
@@ -842,7 +844,6 @@ function GlobalStoreContextProvider(props) {
         });
     }
 
-    console.log(store.sortOrder);
     store.setSortOrder = function (sortOrder) {
         storeReducer({
             type: GlobalStoreActionType.CHANGE_SORT_ORDER,
