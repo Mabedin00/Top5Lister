@@ -15,9 +15,10 @@ import { GlobalStoreContext } from '../store'
 
 
 
-export default function Navbar() {
+export default function Navbar(props) {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const { editActive } = props;
     const [anchorEl, setAnchorEl] = useState(null);
     const isMenuOpen = Boolean(anchorEl);
 
@@ -98,7 +99,7 @@ export default function Navbar() {
     return (
         <div className="navbar">
             <Box display="flex"  alignItems="center">
-                <IconButton disabled={!auth.loggedIn} onClick={() => handleClick('my')}>
+                <IconButton disabled={!auth.loggedIn || editActive} onClick={() => handleClick('my') }>
         
                     <HomeIcon sx={{
                         fontSize: "68px",
@@ -107,21 +108,21 @@ export default function Navbar() {
                     }}
                     />
                 </IconButton>
-                <IconButton onClick={() => handleClick('all')}>
+                <IconButton disabled={editActive} onClick={() => handleClick('all')}>
                     <GroupsIcon sx={{
                         fontSize: "68px",
                         marginRight: '10px',
                         border: store.viewMode === 'all' ? '4px solid #00ff00' : 'none'
                     }} />
                 </IconButton>
-                <IconButton onClick={() => handleClick('user')}>
+                <IconButton disabled={editActive} onClick={() => handleClick('user')}>
                     <PersonIcon sx={{
                         fontSize: "68px",
                         marginRight: '10px',
                         border: store.viewMode === 'user' ? '4px solid #00ff00' : 'none'
                     }} />
                 </IconButton>
-                <IconButton onClick={() => handleClick('community')}>
+                <IconButton disabled={editActive} onClick={() => handleClick('community')}>
                     <FunctionsIcon sx={{
                         fontSize: "68px",
                         marginRight: '10px',

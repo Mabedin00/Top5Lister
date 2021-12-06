@@ -763,8 +763,9 @@ function GlobalStoreContextProvider(props) {
         }
         
         const response = await api.getPublishedTop5ListByUsername(auth.user.username, store.currentList.name);
+        console.log(response);
         if (response.data.success) {
-            if (response.data.length > 0) {
+            if (response.data.data.length > 0) {
                 store.setPublishError("You already have a list with this name");
             }
             else {

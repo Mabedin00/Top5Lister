@@ -35,6 +35,8 @@ export default function SplashScreen() {
                     </Button>
                 </div>
             </div>
+            <br />
+            <Typography variant="h6" style= {{float:"right"}} gutterBottom> Mohidul Abedin </Typography>
 
         </div>
     )

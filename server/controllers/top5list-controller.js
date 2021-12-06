@@ -2,8 +2,7 @@ const Top5List = require('../models/top5list-model');
 const User = require('../models/user-model');
 const CommunityList = require('../models/communitytop5list-model');
 const { createCollection } = require('../models/top5list-model');
-require('@gouch/to-title-case');
-
+require('@gouch/to-title-case')
 
 createTop5List = (req, res) => {
     const body = req.body;
@@ -243,7 +242,13 @@ updateCommunityList = async (communityList) => {
 
             // make elements in top5Items to title case
             for (let i = 0; i < top5Items.length; i++) {
-                top5Items[i].itemName = top5Items[i].toTitleCase();
+                console.log(top5Items[i]);
+                if (typeof top5Items[i] === 'string') {
+                    top5Items[i].itemName = top5Items[i].toTitleCase();
+                }
+                else {
+                    top5Items[i].itemName = top5Items[i].itemName.toTitleCase();
+                }
             }
 
             // update the community list with the top 5 items

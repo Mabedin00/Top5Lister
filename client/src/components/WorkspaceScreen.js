@@ -117,7 +117,7 @@ function WorkspaceScreen() {
 
         <div className="home-screen">
             <AppBanner />
-            <Navbar />
+            <Navbar editActive={true} />
             <Modal
                 open={error !== null}
                 aria-labelledby="modal-modal-title"
