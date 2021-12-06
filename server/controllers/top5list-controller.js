@@ -241,6 +241,11 @@ updateCommunityList = async (communityList) => {
                 return;
             }
 
+            // make elements in top5Items to title case
+            for (let i = 0; i < top5Items.length; i++) {
+                top5Items[i].itemName = top5Items[i].toTitleCase();
+            }
+
             // update the community list with the top 5 items
             communityList.items = top5Items;
             communityList.save()
@@ -275,10 +280,11 @@ deleteCommunityList = async (communityList) => {
 createCommunityList = async (top5List) => {
     let listItem = top5List.items.map((item,index) => {
         return {
-            itemName: item,
+            itemName: item.toTitleCase(),
             votes: 5-index,
         }
     });
+
 
     let communityList = new CommunityList({
         name: top5List.name,
