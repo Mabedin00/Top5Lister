@@ -271,65 +271,6 @@ deleteCommunityList = async (communityList) => {
     }).catch(err => console.log(err))
 }
 
-// updateCommunityList = async (top5ListItems, communityList) => {
-//     await CommunityList.findById({ _id: communityList._id }, (err, communityList) => {
-//         if (err) {
-//         }
-//         if (!communityList) {
-//             createCommunityList(top5List);
-//         }
-//         else {
-//             // create a new list with the previous items of community list + top 5 list items 
-//             // if the item already exists in the list, add the votes else create a new item
-//             let newItems = [];
-//             for (let key in communityList.items) {
-//                 let item = communityList.items[key];
-//                 let newItem = {
-//                     itemName: item.itemName,
-//                     votes: item.votes,
-//                 }
-//                 newItems.push(newItem);
-//             }
-
-//             for (let key in top5ListItems) {
-//                 let item = top5ListItems[key];
-//                 let newItem = {
-//                     itemName: item.itemName,
-//                     votes: item.votes,
-//                 }
-//                 let exists = false;
-//                 for (let key in newItems) {
-//                     let newItem = newItems[key];
-//                     if (newItem.itemName.toLowerCase() === item.itemName.toLowerCase()) {
-//                         newItem.votes = newItem.votes + item.votes;
-//                         exists = true;
-//                     }
-//                 }
-//                 if (!exists) {
-//                     newItems.push(newItem);
-//                 }
-//             }
-
-//             // sort the new items by votes and set comunity list items to the top 5 of the new items
-//             newItems.sort(function(a, b) {
-//                 return b.votes - a.votes;
-//             });
-//             communityList.items = newItems.slice(0, 5);
-
-//             communityList
-//                 .save()
-//                 .then(() => {
-//                     console.log("Community List updated!");
-//                 }
-//                 )
-//                 .catch(error => {
-//                     console.log(error);
-//                 }
-//                 )
-                
-//         }
-//     }).catch(err => console.log(err))
-// }    
 
 createCommunityList = async (top5List) => {
     let listItem = top5List.items.map((item,index) => {
@@ -410,6 +351,21 @@ getListByString = async (req, res) => {
                 return res.status(200).json({ success: true, data: top5Lists })
             }).catch(err => console.log(err));
     }
+}
+
+//  GET ALL COMMUNITY LISTS STARTING WITH A GIVEN STRING (CASE INSENSITIVE)
+getCommunityListByString = async (req, res) => {
+    let query = '^' + req.params.query;
+    await CommunityList.find({name: {$regex : new RegExp(query, "i")}},
+    (err, communityLists) => {
+        if (err) {
+            return res.status(400).json({ success: false, error: err })
+        }
+        if (!communityLists.length) {
+            return res.status(404).json({ success: false, data: [], error: `Community Lists not found` })
+        }
+        return res.status(200).json({ success: true, data: communityLists })
+    }).catch(err => console.log(err));
 }
 
 // GET ALL PUBLISHED TOP 5 LISTS 
@@ -744,6 +700,7 @@ module.exports = {
     dislikeCommunityList,
     likeCommunityList,
     commentTop5List,
+    getCommunityListByString,
     commentCommunityList,
     getPublishedTop5Lists,
     getTop5ListPairsByUsername,   

@@ -26,6 +26,8 @@ router.put('/communitylist/view/:id', auth.verify, Top5ListController.viewCommun
 router.put('/communitylist/dislike/:username/:id', auth.verify, Top5ListController.dislikeCommunityList)
 router.put('/communitylist/like/:username/:id', auth.verify, Top5ListController.likeCommunityList)
 router.put('/communitylist/comment/:username/:id', auth.verify, Top5ListController.commentCommunityList)
+router.get('/communitylist/:query', auth.verify, Top5ListController.getCommunityListByString)
+
 
 
 
