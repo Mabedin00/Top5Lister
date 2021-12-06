@@ -32,6 +32,7 @@ export const viewCommunityList = (id) => api.put(`/communitylist/view/${id}`);
 export const dislikeCommunityList = (username, id) => api.put(`/communitylist/dislike/${username}/${id}`);
 export const likeCommunityList = (username, id) => api.put(`/communitylist/like/${username}/${id}`);
 export const commentCommunityList = (username, id, payload) => api.put(`/communitylist/comment/${username}/${id}`, payload);
+export const getCommunityListByString = (query) => api.get(`/communitylist/${query}`);
 
 
 
@@ -53,6 +54,7 @@ const apis = {
     viewCommunityList,
     publishTop5List,
     getListByString,
+    getCommunityListByString,
     updateTop5ListById,
     deleteTop5ListById,
     getTop5ListById,

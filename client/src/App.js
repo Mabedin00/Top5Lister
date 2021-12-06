@@ -27,9 +27,6 @@ function App() {
                 </GlobalStoreContextProvider>
             </AuthContextProvider>
         </BrowserRouter>
-    // <div className="App">
-    //   <SplashScreen />
-    // </div>
   );
 }
 

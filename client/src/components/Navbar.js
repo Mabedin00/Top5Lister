@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import IconButton from '@mui/material/IconButton';
 import HomeIcon from '@mui/icons-material/HomeOutlined';
 import PersonIcon from '@mui/icons-material/PersonOutlined';
@@ -8,6 +8,8 @@ import SortIcon from '@mui/icons-material/Sort';
 import Box from '@mui/material/Box';
 import AuthContext from '../auth';
 import TextField from '@mui/material/TextField';
+import MenuItem from '@mui/material/MenuItem';
+import Menu from '@mui/material/Menu';
 import Typography from '@mui/material/Typography';
 import { GlobalStoreContext } from '../store'
 
@@ -16,6 +18,9 @@ import { GlobalStoreContext } from '../store'
 export default function Navbar() {
     const { store } = useContext(GlobalStoreContext);
     const { auth } = useContext(AuthContext);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const isMenuOpen = Boolean(anchorEl);
+
 
     const sortStyle = {
         fontSize: "68px",
@@ -23,6 +28,23 @@ export default function Navbar() {
 
     }
 
+    const handleMenuOpen = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = (mode) => {
+        let allowedModes = new Set();
+        allowedModes.add('newest');
+        allowedModes.add('oldest');
+        allowedModes.add('views');
+        allowedModes.add('likes');
+        allowedModes.add('dislikes');
+        if (allowedModes.has(mode)) {
+            console.log(mode);
+            store.setSortOrder(mode);
+            setAnchorEl(null);
+        }
+    };
 
     // Handle click for change view
     const handleClick = (viewMode) => {
@@ -34,13 +56,43 @@ export default function Navbar() {
             if (e.target.value.length > 0) {
                 if (store.viewMode === 'user') {
                     store.loadListsByUsername(e.target.value);
-                } else {
-                    console.log('searching for group');
+                } 
+                else if (store.viewMode === 'community') {
+                    store.getCommunityListByString(e.target.value);
+                }
+                else {
                     store.getListByString(e.target.value);
                 }
             }
         }
     }
+
+
+
+    const menuId = 'primary-search-account-menu';
+    const sortByMenu = (
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={menuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+        >
+            <MenuItem onClick={() => handleMenuClose("newest")}>Date Posted (Newest)</MenuItem>
+            <MenuItem onClick={() => handleMenuClose("oldest")}>Date Posted (Oldest)</MenuItem>
+            <MenuItem onClick={() => handleMenuClose("views")}>Views</MenuItem>
+            <MenuItem onClick={() => handleMenuClose("likes")}>Likes</MenuItem>
+            <MenuItem onClick={() => handleMenuClose("dislikes")}>Dislikes</MenuItem>
+        </Menu>
+    );
     
 
     return (
@@ -92,8 +144,11 @@ export default function Navbar() {
                 <Typography variant="h6"  sx = {{marginLeft:"auto", marginRight: "20px"}}> 
                     SORT BY
                 </Typography>
-                <SortIcon sx={sortStyle} />
+                <SortIcon sx={sortStyle} onClick={handleMenuOpen} />
             </Box>
+            {
+                sortByMenu
+            }
         </div>
     )
 }
