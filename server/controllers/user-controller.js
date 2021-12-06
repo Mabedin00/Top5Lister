@@ -74,6 +74,9 @@ registerUser = async (req, res) => {
             firstName, lastName, email, username, passwordHash
         });
         const savedUser = await newUser.save();
+        return res.status(200).json({
+            success: true,
+        }).send();
 
     } catch (err) {
         console.error(err);

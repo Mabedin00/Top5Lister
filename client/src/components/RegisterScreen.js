@@ -8,6 +8,10 @@ import Button from '@mui/material/Button';
 import logo from '../logo.svg';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
+import Modal from '@mui/material/Modal';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Cancel';
 import FormControlLabel from '@mui/material/FormControlLabel';
 
 export default function RegisterScreen() {
@@ -15,6 +19,20 @@ export default function RegisterScreen() {
     const { store } = useContext(GlobalStoreContext);
     const history = useHistory();
 
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 4,
+      };
+
+    
+    const handleClose = () => auth.setError(null);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -27,14 +45,7 @@ export default function RegisterScreen() {
             password: formData.get('password'),
             passwordVerify: formData.get('passwordVerify')
         }, store);
-        if (!auth.error){
-            history.push('/login');
-        
-        }
-        else{
-            console.log(auth.error);
-            auth.error = null;
-        }
+
     };
 
     return (
@@ -45,6 +56,23 @@ export default function RegisterScreen() {
                    Register
                 </Typography>
             </div>
+            <Modal
+                open={auth.error !== null}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    {/* Make a close button at the top right of the box */}
+                    <IconButton onClick={handleClose}
+                        sx = {{position: 'absolute', top: '0', right: '0'}}
+                    > 
+                        <CloseIcon />
+                    </IconButton>
+                    <Alert severity="error" >
+                        {auth.error}
+                    </Alert>
+                </Box>
+            </Modal>
             <Box
                 component="form"
                 sx={{

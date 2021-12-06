@@ -83,6 +83,7 @@ function AuthContextProvider(props) {
     auth.registerUser = async function(userData, store) {
         await api.registerUser(userData)
         .then(response => {
+            console.log(response)
             if (response.status === 200) {     
             authReducer({
                 type: AuthActionType.REGISTER_USER,
@@ -90,12 +91,12 @@ function AuthContextProvider(props) {
                     user: response.data.user
                 }
             })
-            // history.push("/");
-            // store.loadIdNamePairs();
+                history.push('/login');
             }
         }
         ).catch(err => { 
             let errorMsg = err.response.data.errorMessage;
+            console.log("casvsdf " + errorMsg);
             authReducer({
                 type: AuthActionType.SET_ERROR,
                 payload: {
@@ -120,7 +121,6 @@ function AuthContextProvider(props) {
                     }
                 })
                     history.push("/home");
-                    // store.loadIdNamePairs();
                 }
             }).catch(err => {
                 let errorMsg = err.response.data.errorMessage;
