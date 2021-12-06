@@ -11,13 +11,14 @@ const CommunityTop5ListSchema = new Schema(
         likedBy: { type: [String], default: [] },
         dislikedBy: { type: [String], default: [] },
         views: { type: Number, default: 0 },
+        updatedAt: { type: Date, default: Date.now },
         comments: { type: [{
             comment: { type: String },
             username: { type: String }
         }], default: []  },
 
     },
-    { timestamps: true },
+    { timestamps: false },
 )
 
 module.exports = mongoose.model('CommunityTop5List', CommunityTop5ListSchema)

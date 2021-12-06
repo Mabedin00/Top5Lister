@@ -253,6 +253,7 @@ updateCommunityList = async (communityList) => {
 
             // update the community list with the top 5 items
             communityList.items = top5Items;
+            communityList.updateAt = Date.now();
             communityList.save()
                 .then(() => {
                     console.log("Community List Updated!");

@@ -377,6 +377,7 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getTop5ListPairsByUsername(auth.user.username);
             if (response.data.success) {
                 let pairsArray = response.data.idNamePairs;
+                pairsArray = store.sort(pairsArray, store.sortOrder);
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                     payload: pairsArray
@@ -406,7 +407,8 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getListByString(string, flag, auth.user.username);
             if (response.data.success) {
                 let top5List = response.data.data;
-                console.log(top5List);
+                top5List = store.sort(top5List, store.sortOrder);
+
                 let payload = {
                     idNamePairs: top5List,
                     query: string
@@ -439,7 +441,8 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getCommunityListByString(string);
             if (response.data.success) {
                 let top5List = response.data.data;
-                console.log(top5List);
+                top5List = store.sort(top5List, store.sortOrder);
+
                 let payload = {
                     idNamePairs: top5List,
                     query: string
@@ -472,6 +475,7 @@ function GlobalStoreContextProvider(props) {
             console.log(response);
             if (response.data.success) {
                 let publishedLists = response.data.data;
+                publishedLists = store.sort(publishedLists, store.sortOrder);
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                     payload: publishedLists
@@ -499,6 +503,8 @@ function GlobalStoreContextProvider(props) {
             const response = await api.getPublishedTop5ListsByUsername(username);
             if (response.data.success) {
                 let publishedLists = response.data.data;
+                publishedLists = store.sort(publishedLists, store.sortOrder);
+
                 let payload = {
                     idNamePairs: publishedLists,
                     query: username
@@ -524,7 +530,7 @@ function GlobalStoreContextProvider(props) {
             console.log(response);
             if (response.data.success) {
                 let communityList = response.data.data;
-                
+                communityList = store.sort(communityList, store.sortOrder);
                 storeReducer({
                     type: GlobalStoreActionType.LOAD_ID_NAME_PAIRS,
                     payload: communityList
@@ -541,7 +547,6 @@ function GlobalStoreContextProvider(props) {
     }
 
     store.reloadIdNamePairs =  function () {
-        console.log(store.query==="");
         if (store.query === undefined) return;
         if (store.query === "" ) {
             if (store.viewMode === "my") store.loadIdNamePairs();
