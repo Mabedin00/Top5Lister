@@ -670,6 +670,19 @@ function GlobalStoreContextProvider(props) {
             }
         }
 
+        let itemSet = new Set();
+
+        for (let i = 0; i < store.currentList.items.length; i++) {
+            if (itemSet.has(store.currentList.items[i])) {
+                storeReducer({
+                    type: GlobalStoreActionType.SET_PUBLISH_ERROR,
+                    payload: "You cannot have duplicate items"
+                });
+                return;
+            }
+            itemSet.add(store.currentList.items[i]);
+        }
+
         if(store.currentList.name === ""){
             store.setPublishError("Your list needs a name");
             return;
