@@ -799,11 +799,17 @@ function GlobalStoreContextProvider(props) {
             case "newest": 
                 console.log("SORTING BY NEWEST");
                 top5lists.sort(function(a, b){
+                    if (a.publishedDate === undefined) {
+                        return new Date(b.updatedAt) - new Date(a.updatedAt);
+                    }
                     return new Date(b.publishedDate) - new Date(a.publishedDate);
                 });
                 return top5lists;
             case "oldest":
                 top5lists.sort(function(a, b){
+                    if (a.publishedDate === undefined) {
+                        return new Date(a.updatedAt) - new Date(b.updatedAt);
+                    }
                     return new Date(a.publishedDate) - new Date(b.publishedDate);
                 });
                 return top5lists;
